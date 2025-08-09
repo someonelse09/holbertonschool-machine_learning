@@ -2,7 +2,10 @@
 """ This module includes function np_cat """
 
 
+import numpy as np
+
+
 def np_cat(mat1, mat2, axis=0):
     """ This function concatenates the two matrices """
 
-    return __import__('numpy').concatenate((mat2, mat2), axis=axis)
+    return concatenate((mat2, mat2), axis=axis)
