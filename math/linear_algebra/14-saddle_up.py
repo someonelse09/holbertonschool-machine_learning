@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" This module contains function mat_mul 
+""" This module contains function mat_mul
 that is written using alternative method """
 
 import numpy as np
