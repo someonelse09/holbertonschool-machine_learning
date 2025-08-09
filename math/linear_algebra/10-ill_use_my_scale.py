@@ -2,10 +2,10 @@
 """ This module includes shape function """
 
 
-import numpy as np
+matrix_shape = __import__('2-size_me_please').matrix_shape
 
 
 def np_shape(matrix):
     """ This function calculates the shape of the matrix """
 
-    return np.shape(matrix)
+    return matrix_shape(matrix)
