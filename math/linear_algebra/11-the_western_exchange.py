@@ -6,4 +6,4 @@ called np_transpose """
 def np_transpose(matrix):
     """ This function takes the transpose of the matrix """
 
-    return matrix.transpose
+    return matrix.transpose()
