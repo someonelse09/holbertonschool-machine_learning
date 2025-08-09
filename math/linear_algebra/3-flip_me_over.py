@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-""" This module includes a function that 
+""" This module includes a function that
 takes the transpose of given matrix """
 
 
 def matrix_transpose(matrix):
-    """ this function returns the 
+    """ this function returns the
     transpose of the argument matrix """
 
     number_of_cols = len(matrix[0])
