@@ -8,4 +8,4 @@ import numpy as np
 def np_cat(mat1, mat2, axis=0):
     """ This function concatenates the two matrices """
 
-    return concatenate((mat2, mat2), axis=axis)
+    return np.concatenate((mat1, mat2), axis=axis)
