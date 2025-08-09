@@ -7,9 +7,9 @@ matrix_shape = __import__('2-size_me_please').matrix_shape
 
 def add_matrices2D(mat1, mat2):
     """ This function two matrices element-wise """
-    
+
     res_matrix = []
-    if(matrix_shape(mat1) != matrix_shape(mat2)):
+    if (matrix_shape(mat1) != matrix_shape(mat2)):
         return None
 
     for i in range(len(mat1)):
