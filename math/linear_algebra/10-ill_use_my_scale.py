@@ -8,4 +8,4 @@ matrix_shape = __import__('2-size_me_please').matrix_shape
 def np_shape(matrix):
     """ This function calculates the shape of the matrix """
 
-    return matrix_shape(matrix)
+    return tuple(matrix_shape(matrix))
