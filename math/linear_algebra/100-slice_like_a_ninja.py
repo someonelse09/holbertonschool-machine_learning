@@ -15,6 +15,6 @@ def np_slice(matrix, axes={}):
             slice_tuple = axes[axis]
             slices.append(slice(*slice_tuple))
         else:
-            slice.append(slice(None))
+            slices.append(slice(None))
 
     return matrix[tuple(slices)]
