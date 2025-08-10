@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" This module includes a function 
+""" This module includes a function
 to add two multi-dimensional arrays """
 
 
@@ -22,6 +22,6 @@ def add_matrices(mat1, mat2):
     for i in range(len(mat1)):
         element_sum = add_matrices(mat1[i], mat2[i])
         if element_sum is None:
-             return None
+            return None
         result.append(element_sum)
     return result
