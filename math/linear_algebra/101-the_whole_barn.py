@@ -13,6 +13,9 @@ def add_matrices(mat1, mat2):
     if matrix_shape(mat1) != matrix_shape(mat2):
         return None
 
+    if not isinstance(mat1, list) and not isinstance(mat2, list):
+        return mat1 + mat2
+
     if isinstance(mat1, list) != isinstance(mat2, list) or len(mat1) != len(mat2):
         return None
     result = []
