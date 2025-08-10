@@ -3,7 +3,6 @@
 slice the matrix using numpy """
 
 
-
 def np_slice(matrix, axes={}):
     """ This function slices the matrix
     based on the given axis """
