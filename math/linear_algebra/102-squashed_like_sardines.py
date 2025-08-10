@@ -11,8 +11,8 @@ def cat_matrices(mat1, mat2, axis=0):
     """ This function concats given
     two matrices of any dimension """
 
-    int shape1 = matrix_shape(mat1)
-    int shape2 = matrix_shape(mat2)
+    shape1 = matrix_shape(mat1)
+    shape2 = matrix_shape(mat2)
     if shape1 is None or shape2 is None:
         return None
     if axis >= len(shape1) or axis >= len(shape2)):
