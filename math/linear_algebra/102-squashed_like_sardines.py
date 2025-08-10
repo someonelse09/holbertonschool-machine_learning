@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """ This module contains function
-that is kind of the generalisation of 
+that is kind of the generalisation of
 the previosly written cat_matrices2D """
 
 
@@ -15,7 +15,7 @@ def cat_matrices(mat1, mat2, axis=0):
     shape2 = matrix_shape(mat2)
     if shape1 is None or shape2 is None:
         return None
-    if axis >= len(shape1) or axis >= len(shape2)):
+    if axis >= len(shape1) or axis >= len(shape2):
         return None
     if len(shape1) != len(shape2):
         return None
