@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
+""" This module contains
+the function change_scale """
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def change_scale():
+    """ This function changes the scale of axis """
     x = np.arange(0, 28651, 5730)
     r = np.log(0.5)
     t = 5730
