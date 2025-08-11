@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
+""" This module includes 
+the function called frequency
+which decribes an histogram of scores """
+
+
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 def frequency():
     """ This function plots 
