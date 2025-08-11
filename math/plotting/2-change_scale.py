@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 
 
 def change_scale():
-    """ This function changes the scale of axis """
+    """ This function changes the scale of axis ""
+    "
     x = np.arange(0, 28651, 5730)
     r = np.log(0.5)
     t = 5730
