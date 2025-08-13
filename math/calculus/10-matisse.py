@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+""" This module contain the function called matisse """
+
+
+def poly_derivative(poly):
+    """ This function calculates the
+    derivative of the given poltnomial """
+    if not isinstance(poly, list):
+        return None
+    elif len(poly) == 1:
+        return [0]
+    return [x*poly[x] for x in range(1, len(poly))]
