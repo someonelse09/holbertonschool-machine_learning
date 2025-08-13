@@ -8,10 +8,16 @@ def poly_integral(poly, C=0):
 
     if not isinstance(poly, list):
         return None
-    if not all(isinstance(c, (int, float)) for c in poly):
+    if not all(isinstance(s, (int, float)) for s in poly):
+        return None
+    if not isinstance(C, (int, float)):
         return None
     elif len(poly) == 0:
-        return [0]
-    result = [1/(x)*poly[x - 1] for x in range(1, len(poly) + 1)]
-    result.insert(0, 0)
+        return None
+    result = [C]
+    for x in range(len(poly)):
+        val = poly[x]/(x + 1)
+        if val.is_integer():
+            val = int(val)
+        result.append(val)
     return result
