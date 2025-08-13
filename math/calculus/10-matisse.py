@@ -5,7 +5,9 @@
 def poly_derivative(poly):
     """ This function calculates the
     derivative of the given poltnomial """
-    if not isinstance(poly, list):
+    if not isinstance(poly, list) or len(poly) == 0:
+        return None
+    if not all(isinstance(c, (int, float)) for c in poly):
         return None
     elif len(poly) == 1:
         return [0]
