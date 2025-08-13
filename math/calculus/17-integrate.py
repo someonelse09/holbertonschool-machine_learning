@@ -12,7 +12,7 @@ def poly_integral(poly, C=0):
         return None
     if not isinstance(C, (int, float)):
         return None
-    elif len(poly) == 0:
+    if  len(poly) == 0:
         return None
     result = [C]
     for x in range(len(poly)):
