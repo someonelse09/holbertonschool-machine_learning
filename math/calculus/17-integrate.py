@@ -2,7 +2,7 @@
 """ This module contain the function called poly_integral """
 
 
-def poly_derivative(poly, C=0):
+def poly_integral(poly, C=0):
     """ This function calculates the
     integral of the given polynomial """
 
