@@ -12,7 +12,7 @@ def poly_integral(poly, C=0):
         return None
     if not isinstance(C, (int, float)):
         return None
-    if  len(poly) == 0:
+    if len(poly) == 0:
         return None
     result = [C]
     for x in range(len(poly)):
@@ -20,4 +20,6 @@ def poly_integral(poly, C=0):
         if val.is_integer():
             val = int(val)
         result.append(val)
+    while len(result) > 1 and result[-1] == 0:
+        result.pop()
     return result
