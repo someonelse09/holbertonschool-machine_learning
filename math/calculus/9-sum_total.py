@@ -8,7 +8,4 @@ def summation_i_squared(n):
 
     if n < 0:
         return None
-    elif n == 0:
-        return 0
-    else:
-        return n**2 + summation_i_squared(n - 1)
+    return sum(i**2 for i in range(n + 1))
