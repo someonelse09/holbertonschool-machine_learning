@@ -4,6 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def gradient():
     """ This function draws a
     scatter plot of mountain elevation """
