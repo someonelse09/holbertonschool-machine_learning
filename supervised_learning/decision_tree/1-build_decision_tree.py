@@ -55,7 +55,8 @@ class Leaf(Node):
 
 class Decision_Tree():
     """ class to interpret Decision Trees """
-    def __init__(self, max_depth=10, min_pop=1, seed=0, split_criterion="random", root=None):
+    def __init__(self, max_depth=10, min_pop=1, 
+            seed=0, split_criterion="random", root=None):
         """ Constructor of Decision Tree class """
         self.rng = np.random.default_rng(seed)
         if root:
@@ -72,3 +73,5 @@ class Decision_Tree():
     def depth(self) :
         """ method to return depth of the tree """
         return self.root.max_depth_below()
+    def count_nodes(self, only_leaves=False):
+        return self.root.count_nodes_below(only_leaves)
