@@ -31,6 +31,7 @@ class Node:
         return max_depth
 
     def count_nodes_below(self, only_leaves=False):
+        """method to count all nodes(or leaves)"""
         if only_leaves:
             count = 0
         else:
@@ -44,6 +45,7 @@ class Node:
 class Leaf(Node):
     """ class to interpret Leaves of the tree """
     def __init__(self, value, depth=None):
+        """Constructor of leaf class"""
         super().__init__()
         self.value = value
         self.is_leaf = True
@@ -54,6 +56,7 @@ class Leaf(Node):
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
+        """method to return 1 if a leaf is reached"""
         return 1
 
 class Decision_Tree():
@@ -77,4 +80,6 @@ class Decision_Tree():
         """ method to return depth of the tree """
         return self.root.max_depth_below()
     def count_nodes(self, only_leaves=False):
+        """method to apply count_nodes_below 
+        method of Node class to root """
         return self.root.count_nodes_below(only_leaves)
