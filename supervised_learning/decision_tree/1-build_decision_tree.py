@@ -31,7 +31,6 @@ class Node:
         return max_depth
 
     def count_nodes_below(self, only_leaves=False):
-        """ Method to count number of nodes"""
         if only_leaves:
             count = 0
         else:
@@ -39,7 +38,8 @@ class Node:
         if self.left_child is not None:
             count += self.left_child.count_nodes_below(only_leaves)
         if self.right_child is not None:
-            count += self.right_child.count_nodes_below()
+            count += self.right_child.count_nodes_below(only_leaves)
+
         return count
 class Leaf(Node):
     """ class to interpret Leaves of the tree """
@@ -52,12 +52,13 @@ class Leaf(Node):
     def max_depth_below(self):
         """ method to return maximum depth """
         return self.depth
+
     def count_nodes_below(self, only_leaves=False):
         return 1
 
 class Decision_Tree():
     """ class to interpret Decision Trees """
-    def __init__(self, max_depth=10, min_pop=1, 
+    def __init__(self, max_depth=10, min_pop=1,
             seed=0, split_criterion="random", root=None):
         """ Constructor of Decision Tree class """
         self.rng = np.random.default_rng(seed)
