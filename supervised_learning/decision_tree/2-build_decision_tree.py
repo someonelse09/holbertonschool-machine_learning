@@ -59,18 +59,20 @@ class Node:
         return (new_text)
 
     def __str__(self):
-        """this method implements the str structure for the nodes"""
-        if self.is_root:
-            result = f"root [feature={self.feature}, threshold={self.threshold}]\n"
-        else:
-            result = f"-> node [feature={self.feature}, threshold={self.threshold}]\n"
-        if self.left_child is not None:
-            left_part = str(self.left_child)
-            result += self.left_child_add_prefix(left_part)
-        if self.right_child is not None:
-            right_part = str(self.right_child)
-            result += self.right_child_add_prefix(right_part)
-        return result.rstrip()
+    if self.is_root:
+        result = f"root [feature={self.feature}, threshold={self.threshold}]"
+    else:
+        result = f"> node [feature={self.feature}, threshold={self.threshold}]"
+    
+    if self.left_child is not None:
+        left_part = str(self.left_child)
+        result += "\n" + self.left_child_add_prefix(left_part).rstrip()
+    
+    if self.right_child is not None:
+        right_part = str(self.right_child) 
+        result += "\n" + self.right_child_add_prefix(right_part).rstrip()
+    
+    return result
 
 
 class Leaf(Node):
