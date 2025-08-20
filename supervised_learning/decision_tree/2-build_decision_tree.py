@@ -62,7 +62,7 @@ class Node:
         if self.is_root:
             result = f"root [feature={self.feature}, threshold={self.threshold}]"
         else:
-            result = f"> node [feature={self.feature}, threshold={self.threshold}]"
+            result = f"-> node [feature={self.feature}, threshold={self.threshold}]"
     
         if self.left_child is not None:
             left_part = str(self.left_child)
