@@ -63,7 +63,7 @@ class Node:
         if self.is_root:
             result = f"root [feature={self.feature}, threshold={self.threshold}]\n"
         else:
-            result = f"> node [feature={self.feature}, threshold={self.threshold}]\n"
+            result = f"--> node [feature={self.feature}, threshold={self.threshold}]\n"
         if self.left_child is not None:
             left_part = str(self.left_child)
             result += self.left_child_add_prefix(left_part)
@@ -92,7 +92,7 @@ class Leaf(Node):
 
     def __str__(self):
         """method to return str structure of the leaves"""
-        return (f"-> leaf [value={self.value}]")
+        return (f"--> leaf [value={self.value}]")
 
 
 class Decision_Tree():
