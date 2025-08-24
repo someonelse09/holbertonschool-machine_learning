@@ -55,7 +55,7 @@ class Node:
         for x in lines[1:]:
             new_text += ("    |  " + x) + "\n"
         return (new_text)
-    
+
     def right_child_add_prefix(self, text):
         """Add prefixes to the left child node"""
         lines = text.split("\n")
@@ -63,7 +63,7 @@ class Node:
         for x in lines[1:]:
             new_text += ("    |  " + x) + "\n"
         return (new_text)
-    
+
     def __str__(self):
         if self.left_child is not None:
             print()
@@ -115,7 +115,7 @@ class Decision_Tree():
     def depth(self):
         """ method to return depth of the tree """
         return self.root.max_depth_below()
-    
+
     def count_nodes(self, only_leaves=False):
         """method to apply count_nodes_below
         method of Node class to root """
