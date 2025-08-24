@@ -99,7 +99,7 @@ class Node:
                 child.lower = self.lower.copy()
 
                 if child == self.left_child:
-                    # Left: feature <= threshold 
+                    # Left: feature <= threshold
                     # (so upper bound becomes threshold)
                     child.lower[self.feature] = self.threshold
                 else:
