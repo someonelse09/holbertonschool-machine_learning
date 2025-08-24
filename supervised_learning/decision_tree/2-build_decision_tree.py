@@ -7,8 +7,9 @@ import numpy as np
 
 class Node:
     """ class to interpret Nodes """
+
     def __init__(self, feature=None, threshold=None, left_child=None,
-        right_child=None, is_root=False, depth=0):
+                 right_child=None, is_root=False, depth=0):
         """ Constructor of Node class """
         self.feature = feature
         self.threshold = threshold
@@ -59,24 +60,26 @@ class Node:
         return (new_text)
 
     def __str__(self):
+        """method to print the str structure of Decision Tree"""
         if self.is_root:
             result = f"root [feature={self.feature}, threshold={self.threshold}]"
         else:
             result = f"-> node [feature={self.feature}, threshold={self.threshold}]"
-    
+
         if self.left_child is not None:
             left_part = str(self.left_child)
             result += "\n" + self.left_child_add_prefix(left_part).rstrip()
-    
+
         if self.right_child is not None:
-            right_part = str(self.right_child) 
+            right_part = str(self.right_child)
             result += "\n" + self.right_child_add_prefix(right_part).rstrip()
-    
+
         return result
 
 
 class Leaf(Node):
     """ class to interpret Leaves of the tree """
+
     def __init__(self, value, depth=None):
         """Constructor of leaf class"""
         super().__init__()
@@ -99,8 +102,9 @@ class Leaf(Node):
 
 class Decision_Tree():
     """ class to interpret Decision Trees """
+
     def __init__(self, max_depth=10, min_pop=1,
-        seed=0, split_criterion="random", root=None):
+                 seed=0, split_criterion="random", root=None):
         """ Constructor of Decision Tree class """
         self.rng = np.random.default_rng(seed)
         if root:
@@ -114,9 +118,10 @@ class Decision_Tree():
         self.split_criterion = split_criterion
         self.predict = None
 
-    def depth(self) :
+    def depth(self):
         """ method to return depth of the tree """
         return self.root.max_depth_below()
+
     def count_nodes(self, only_leaves=False):
         """method to apply count_nodes_below
         method of Node class to root """
