@@ -7,8 +7,13 @@ import numpy as np
 
 class Node:
     """ class to interpret Nodes """
-    def __init__(self, feature=None, threshold=None, left_child=None,
-            right_child=None, is_root=False, depth=0):
+    def __init__(self, feature=None,
+                 threshold=None,
+                 left_child=None,
+                 right_child=None,
+                 is_root=False,
+                 depth=0
+                 ):
         """ Constructor of Node class """
         self.feature = feature
         self.threshold = threshold
@@ -42,6 +47,28 @@ class Node:
             count += self.right_child.count_nodes_below(only_leaves)
 
         return count
+
+    def left_child_add_prefix(self, text):
+        """Add prefixes to the left child node"""
+        lines = text.split("\n")
+        new_text = "    +--" + lines[0] + "\n"
+        for x in lines[1:]:
+            new_text += ("    |  " + x) + "\n"
+        return (new_text)
+    
+    def right_child_add_prefix(self, text):
+        """Add prefixes to the left child node"""
+        lines = text.split("\n")
+        new_text = "    +--" + lines[0] + "\n"
+        for x in lines[1:]:
+            new_text += ("    |  " + x) + "\n"
+        return (new_text)
+    
+    def __str__(self):
+        if self.left_child is not None:
+            print()
+
+
 class Leaf(Node):
     """ class to interpret Leaves of the tree """
     def __init__(self, value, depth=None):
@@ -59,10 +86,19 @@ class Leaf(Node):
         """method to return 1 if a leaf is reached"""
         return 1
 
+    def __str__(self):
+        """method to return leaves' str structure"""
+        return (f"-> leaf [value={self.value}]")
+
+
 class Decision_Tree():
     """ class to interpret Decision Trees """
-    def __init__(self, max_depth=10, min_pop=1,
-            seed=0, split_criterion="random", root=None):
+    def __init__(self, max_depth=10,
+                 min_pop=1,
+                 seed=0,
+                 split_criterion="random",
+                 root=None
+                 ):
         """ Constructor of Decision Tree class """
         self.rng = np.random.default_rng(seed)
         if root:
@@ -76,10 +112,15 @@ class Decision_Tree():
         self.split_criterion = split_criterion
         self.predict = None
 
-    def depth(self) :
+    def depth(self):
         """ method to return depth of the tree """
         return self.root.max_depth_below()
+    
     def count_nodes(self, only_leaves=False):
-        """method to apply count_nodes_below 
+        """method to apply count_nodes_below
         method of Node class to root """
         return self.root.count_nodes_below(only_leaves)
+
+    def __str__(self):
+        """method to return root node's str structure"""
+        return self.root.__str__()
