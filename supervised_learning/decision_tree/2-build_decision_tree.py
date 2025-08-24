@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
-""" This module includes class
-implementation of a decision tree """
-
+""" Number of nodes/leaves in a decision tree."""
 import numpy as np
 
 
 class Node:
-    """ class to interpret Nodes """
+    """A node class containing leaves,roots."""
 
     def __init__(self, feature=None, threshold=None, left_child=None,
                  right_child=None, is_root=False, depth=0):
-        """ Constructor of Node class """
+        """Constructor of Node class."""
         self.feature = feature
         self.threshold = threshold
         self.left_child = left_child
@@ -21,91 +19,105 @@ class Node:
         self.depth = depth
 
     def max_depth_below(self):
-        """ method to find maximum depth """
-        if self.left_child is None and self.right_child is None:
+        """Return the maximum depth."""
+        if self.is_leaf:
             return self.depth
-        max_depth = self.depth
-        if self.left_child is not None:
-            max_depth = max(max_depth, self.left_child.max_depth_below())
-        if self.right_child is not None:
-            max_depth = max(max_depth, self.right_child.max_depth_below())
-        return max_depth
+        left = self.left_child.max_depth_below() \
+            if self.left_child else self.depth
+        right = self.right_child.max_depth_below() \
+            if self.right_child else self.depth
+        return max(left, right)
 
     def count_nodes_below(self, only_leaves=False):
-        """method to count all nodes(or leaves)"""
+        """Count the number of nodes below, only leaves if specified."""
+        if self.is_leaf:
+            return 1
+
         if only_leaves:
-            count = 0
+            if self.left_child:
+                left = self.left_child.count_nodes_below(True)
+            else:
+                left = 0
+            if self.right_child:
+                right = self.right_child.count_nodes_below(True)
+            else:
+                right = 0
+            return left + right
         else:
-            count = 1
-        if self.left_child is not None:
-            count += self.left_child.count_nodes_below(only_leaves)
-        if self.right_child is not None:
-            count += self.right_child.count_nodes_below(only_leaves)
-        return count
+            if self.left_child:
+                left = self.left_child.count_nodes_below(False)
+            else:
+                left = 0
+            if self.right_child:
+                right = self.right_child.count_nodes_below(False)
+            else:
+                right = 0
+            return 1 + left + right
 
     def left_child_add_prefix(self, text):
-        """this method adds prefixes to the left child nodes"""
+        """Add prefix for left child."""
         lines = text.split("\n")
-        new_text = "    +--" + lines[0] + "\n"
+        new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             new_text += ("    |  " + x) + "\n"
-        return (new_text)
+        return new_text
 
     def right_child_add_prefix(self, text):
-        """this method adds prefixes to the right child nodes"""
+        """Add prefix for right child.."""
         lines = text.split("\n")
-        new_text = "    +--" + lines[0] + "\n"
+        new_text = "    +---> " + lines[0] + "\n"
         for x in lines[1:]:
             new_text += ("       " + x) + "\n"
-        return (new_text)
+        return new_text
 
     def __str__(self):
-        """method to print the str structure of Decision Tree"""
+        """Return an ASCII representation."""
         if self.is_root:
-            result = f"root [feature={self.feature}, threshold={self.threshold}]"
+            label = (f"root [feature={self.feature}"
+                     f", threshold={self.threshold}]")
         else:
-            result = f"-> node [feature={self.feature}, threshold={self.threshold}]"
+            label = (f"node [feature={self.feature}"
+                     f", threshold={self.threshold}]")
 
-        if self.left_child is not None:
-            left_part = str(self.left_child)
-            result += "\n" + self.left_child_add_prefix(left_part).rstrip()
-
-        if self.right_child is not None:
-            right_part = str(self.right_child)
-            result += "\n" + self.right_child_add_prefix(right_part).rstrip()
-
+        result = label
+        if self.left_child:
+            result += "\n" + self.left_child_add_prefix(str(self.left_child))\
+                    .rstrip("\n")
+        if self.right_child:
+            result += "\n" +\
+                    self.right_child_add_prefix(str(self.right_child))\
+                    .rstrip("\n")
         return result
 
 
 class Leaf(Node):
-    """ class to interpret Leaves of the tree """
+    """Leaf class."""
 
     def __init__(self, value, depth=None):
-        """Constructor of leaf class"""
+        """Constructor of Leaf class."""
         super().__init__()
         self.value = value
         self.is_leaf = True
         self.depth = depth
 
     def max_depth_below(self):
-        """ method to return maximum depth """
+        """Return the depth of the leaf."""
         return self.depth
 
     def count_nodes_below(self, only_leaves=False):
-        """method to return 1 if a leaf is reached"""
+        """Return the count of a leaf."""
         return 1
 
     def __str__(self):
-        """method to return str structure of the leaves"""
-        return (f"-> leaf [value={self.value}]")
+        return f"leaf [value={self.value}]"
 
 
 class Decision_Tree():
-    """ class to interpret Decision Trees """
+    """Decision Tree class."""
 
-    def __init__(self, max_depth=10, min_pop=1,
-                 seed=0, split_criterion="random", root=None):
-        """ Constructor of Decision Tree class """
+    def __init__(self, max_depth=10, min_pop=1, seed=0,
+                 split_criterion="random", root=None):
+        """Constructor of decision tree class."""
         self.rng = np.random.default_rng(seed)
         if root:
             self.root = root
@@ -119,14 +131,13 @@ class Decision_Tree():
         self.predict = None
 
     def depth(self):
-        """ method to return depth of the tree """
+        """Return the maximum depth of tree."""
         return self.root.max_depth_below()
 
     def count_nodes(self, only_leaves=False):
-        """method to apply count_nodes_below
-        method of Node class to root """
-        return self.root.count_nodes_below(only_leaves)
+        """Return the count of leaves."""
+        return self.root.count_nodes_below(only_leaves=only_leaves)
 
     def __str__(self):
-        """method to return str structure of the decision tree"""
-        return self.root.__str__()
+        """Print the tree."""
+        return self.root.__str__() + "\n"
