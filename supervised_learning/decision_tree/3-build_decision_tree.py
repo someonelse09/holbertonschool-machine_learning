@@ -61,9 +61,11 @@ class Node:
     def __str__(self):
         """this method implements the str structure for the nodes"""
         if self.is_root:
-            result = f"root [feature={self.feature}, threshold={self.threshold}]\n"
+            result = \
+            f"root [feature={self.feature}, threshold={self.threshold}]\n"
         else:
-            result = f"-> node [feature={self.feature}, threshold={self.threshold}]\n"
+            result = \
+            f"-> node [feature={self.feature}, threshold={self.threshold}]\n"
         if self.left_child is not None:
             left_part = str(self.left_child)
             result += self.left_child_add_prefix(left_part)
@@ -128,7 +130,7 @@ class Decision_Tree():
     def depth(self):
         """ method to return depth of the tree """
         return self.root.max_depth_below()
-    
+
     def count_nodes(self, only_leaves=False):
         """method to apply count_nodes_below
         method of Node class to root """
@@ -141,7 +143,7 @@ class Decision_Tree():
     def depth(self):
         """ method to return depth of the tree """
         return self.root.max_depth_below()
-    
+
     def count_nodes(self, only_leaves=False):
         """method to apply count_nodes_below
         method of Node class to root """
