@@ -60,13 +60,15 @@ class Node:
 
     def __str__(self):
         """this method implements the str structure for the nodes"""
+        thres = "threshold={self.threshold}]"
+        feat = "[feature={self.feature}"
         if self.is_root:
             result = (
-                f"root [feature={self.feature}, threshold={self.threshold}]\n"
+                f"root " + feat + "," + thres + "\n"
             )
         else:
             result = (
-                f"-> node [feature={self.feature}, threshold={self.threshold}]\n"
+                f"-> node" + feat + "," + thres + "\n"
             )
         if self.left_child is not None:
             left_part = str(self.left_child)
