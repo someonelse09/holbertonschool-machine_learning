@@ -8,8 +8,8 @@ class NeuralNetwork:
     """This class defines a Neural Network"""
     def __init__(self, nx, nodes):
         """Initialising the Neural Network"""
-        if type(nx) is not int:
-            raise TypeError("x must be an integer")
+        if not isinstance(nx, int):
+            raise TypeError("nx must be an integer")
         if nx < 1:
             raise ValueError("nx must be a positive integer")
         if not isinstance(nodes, int):
