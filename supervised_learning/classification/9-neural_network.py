@@ -40,17 +40,17 @@ class NeuralNetwork:
         return self.__A1
 
     @property
-    def W1(self):
+    def W2(self):
         """getter method for output layer's weight"""
         return self.__W1
 
     @property
-    def b1(self):
+    def b2(self):
         """getter method for output layer's bias"""
         return self.__b1
 
     @property
-    def A1(self):
+    def A2(self):
         """getter method for
         output layer's activated output"""
         return self.__A2
