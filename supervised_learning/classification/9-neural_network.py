@@ -10,11 +10,11 @@ class NeuralNetwork:
         """Initialising the Neural Network"""
         if not isinstance(nx, int):
             raise TypeError("x must be an integer")
-        if nx <= 0:
+        if nx < 1:
             raise ValueError("nx must be a positive integer")
         if not isinstance(nodes, int):
             raise TypeError("nodes must be an integer")
-        if nodes <= 0:
+        if nodes < 1:
             raise ValueError("nodes must be a positive integer")
         self.__W1 = np.random.randn(nodes, nx)
         self.__b1 = np.zeros((nodes, 1))
@@ -42,15 +42,15 @@ class NeuralNetwork:
     @property
     def W2(self):
         """getter method for output layer's weight"""
-        return self.__W1
+        return self.__W2
 
     @property
     def b2(self):
         """getter method for output layer's bias"""
-        return self.__b1
+        return self.__b2
 
     @property
     def A2(self):
         """getter method for
         output layer's activated output"""
-        return self.__A2
+        return self.__A2 
