@@ -22,6 +22,8 @@ class DeepNeuralNetwork:
         for lx in range(1, self.L + 1):
             if not isinstance(layers[lx - 1], int) or layers[lx - 1] <= 0:
                 raise ValueError("layers must be a list of positive integers")
+            if layers[lx - 1] <= 0:
+                raise ValueError("layers must be a list of positive integers")
             if lx == 1:
                 previous_nodes = nx
             else:
