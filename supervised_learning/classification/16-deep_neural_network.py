@@ -5,8 +5,9 @@ import numpy as np
 
 
 class DeepNeuralNetwork:
-    """This class is for implementing multi-layered(more than two) Neural Networks"""
-    
+    """This class is for implementing
+     multi-layered(more than two) Neural Networks"""
+
     def __init__(self, nx, layers):
         """Initialising the Deep Neural Network"""
         if not isinstance(nx, int):
@@ -15,24 +16,23 @@ class DeepNeuralNetwork:
             raise ValueError("nx must be a positive integer")
         if not isinstance(layers, list) or len(layers) == 0:
             raise TypeError("layers must be a list of positive integers")
-        
+
         self.L = len(layers)
         self.cache = {}
         self.weights = {}
-        
+
         for lx in range(1, self.L + 1):
             # Validate each layer element during the loop
             if not isinstance(layers[lx - 1], int) or layers[lx - 1] <= 0:
                 raise TypeError("layers must be a list of positive integers")
-            
+
             if lx == 1:
                 previous_nodes = nx
             else:
                 previous_nodes = layers[lx - 2]
-            
-            # He et al. initialization
+
             self.weights['W' + str(lx)] = (
-                np.random.randn(layers[lx - 1], previous_nodes) * 
+                np.random.randn(layers[lx - 1], previous_nodes) *
                 np.sqrt(2 / previous_nodes)
             )
             self.weights['b' + str(lx)] = np.zeros((layers[lx - 1], 1))
