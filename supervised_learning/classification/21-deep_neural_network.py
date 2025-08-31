@@ -98,7 +98,7 @@ class DeepNeuralNetwork:
             previous_A = cache['A' + str(lx - 1)]
 
             # Calculate gradients for current layer
-            dW = (1 / m) * np.matmul(dZ, previous_A.T)
+            dW = (1 / m) * (dZ @ previous_A.T)
             db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
 
             # Update weights and biases immediately
@@ -107,6 +107,6 @@ class DeepNeuralNetwork:
 
             # Calculate dZ for previous layer (if not the first layer)
             if lx > 1:
-                dZ = np.matmul(W.T, dZ) * A_prev * (1 - A_prev)
+                dZ = (W.T @ dZ) * A_prev * (1 - A_prev)
             self.__weights['W' + str(lx)] -= alpha * dW
             self.__weights['b' + str(lx)] -= alpha * db
