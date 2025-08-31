@@ -78,3 +78,30 @@ class DeepNeuralNetwork:
         m = Y.shape[1]
         cost = -((1/m)*(np.sum((1 - Y) * np.log(1.0000001 - A) + Y * np.log(A))))
         return cost
+
+    def evaluate(self, X, Y):
+        """Evaluates the deep neural network’s predictions"""
+        Al, _ = self.forward_prop(X)
+        predictions = np.where(Al >= 0.5, 1, 0)
+        cost = self.cost(Y, Al)
+        return predictions, cost
+
+    def gradient_descent(self, Y, cache, alpha=0.05):
+        """Calculates one pass of
+        gradient descent on the deep neural network"""
+        m = Y.shape[1]
+        A_L = cache['A' + str(self.__L)]
+        dZ = A_L - Y
+        for lx in range(1, self.__L + 1):
+            previous_A = cache['A' + str(lx - 1)]
+
+            dW = (1/m) * np.matmul(dZ, previous_A.T)
+            db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
+
+            self.__weights['W' + str(lx)] -= alpha * dW
+            self.__weights['b' + str(lx)] -= alpha * db
+            # Calculating dZ for the previous layer (if not the first layer)
+            if lx > 1:
+                W = self.__weights['W' + str(lx)]
+                previous_A = cache['A' + str(lx - 1)]
+                dZ = np.matmul(W.T, dZ) * previous_A * (1 - previous_A)
