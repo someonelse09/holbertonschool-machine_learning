@@ -64,11 +64,7 @@ class DeepNeuralNetwork:
             previous_A = self.__cache['A' + str(lx - 1)]
 
             Z = np.matmul(W, previous_A) + b
-
-            if lx == self.__L:
-                A = 1 / (1 + np.exp(-Z))
-            else:
-                A = np.maximum(0, Z)
+            A = 1 / (1 + np.exp(-Z))
             self.__cache['A' + str(lx)] = A
         return self.__cache['A' + str(self.__L)], self.__cache
 
@@ -76,7 +72,9 @@ class DeepNeuralNetwork:
         """Calculates the cost of
         the model using logistic regression"""
         m = Y.shape[1]
-        cost = -((1/m)*(np.sum((1 - Y) * np.log(1.0000001 - A) + Y * np.log(A))))
+        cost = -((1/m)*(
+            np.sum((1 - Y) * np.log(1.0000001 - A) + Y * np.log(A))
+        ))
         return cost
 
     def evaluate(self, X, Y):
