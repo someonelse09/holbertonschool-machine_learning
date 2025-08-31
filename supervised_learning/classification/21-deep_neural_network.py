@@ -90,16 +90,19 @@ class DeepNeuralNetwork:
         m = Y.shape[1]
         A_L = cache['A' + str(self.__L)]
         dZ = A_L - Y
-        for lx in range(1, self.__L + 1):
+        gradients = {}
+        for lx in range(self.__L, 0, -1):
             previous_A = cache['A' + str(lx - 1)]
-
             dW = (1/m) * np.matmul(dZ, previous_A.T)
             db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
 
-            self.__weights['W' + str(lx)] -= alpha * dW
-            self.__weights['b' + str(lx)] -= alpha * db
-            # Calculating dZ for the previous layer (if not the first layer)
+            gradients['dW' + str(lx)] = dW
+            gradients['db' + str(lx)] = db
+
             if lx > 1:
                 W = self.__weights['W' + str(lx)]
                 previous_A = cache['A' + str(lx - 1)]
                 dZ = np.matmul(W.T, dZ) * previous_A * (1 - previous_A)
+        for lx in range(1, self.__L + 1):
+            self.__weights['W' + str(lx)] -= alpha * gradients['dW' + str(lx)]
+            self.__weights['b' + str(lx)] -= alpha * gradients['db' + str(lx)]
