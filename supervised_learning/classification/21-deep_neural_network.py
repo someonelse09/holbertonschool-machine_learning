@@ -92,10 +92,7 @@ class DeepNeuralNetwork:
         A_L = cache['A' + str(self.__L)]
         dZ = A_L - Y
 
-        # Store gradients for all layers
-        gradients = {}
-
-        # Loop 1: Calculate all gradients (backward pass)
+        # Single loop: Calculate gradients and update weights (backward pass)
         for lx in range(self.__L, 0, -1):
             # Get the previous layer's activations
             previous_A = cache['A' + str(lx - 1)]
@@ -104,17 +101,12 @@ class DeepNeuralNetwork:
             dW = (1 / m) * np.matmul(dZ, previous_A.T)
             db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
 
-            # Store gradients
-            gradients['dW' + str(lx)] = dW
-            gradients['db' + str(lx)] = db
+            # Update weights and biases immediately
+            self.__weights['W' + str(lx)] -= alpha * dW
+            self.__weights['b' + str(lx)] -= alpha * db
 
             # Calculate dZ for previous layer (if not the first layer)
             if lx > 1:
                 W = self.__weights['W' + str(lx)]
                 A_prev = cache['A' + str(lx - 1)]
                 dZ = np.matmul(W.T, dZ) * A_prev * (1 - A_prev)
-
-        # Loop 2: Update all weights and biases
-        for lx in range(1, self.__L + 1):
-            self.__weights['W' + str(lx)] -= alpha * gradients['dW' + str(lx)]
-            self.__weights['b' + str(lx)] -= alpha * gradients['db' + str(lx)]
