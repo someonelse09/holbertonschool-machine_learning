@@ -95,18 +95,18 @@ class DeepNeuralNetwork:
         # Single loop: Calculate gradients and update weights (backward pass)
         for lx in range(self.__L, 0, -1):
             # Get the previous layer's activations
-            previous_A = cache['A' + str(lx - 1)]
+            previous_A = cache[f"A{lx - 1}"]
 
             # Calculate gradients for current layer
             dW = (1 / m) * (dZ @ previous_A.T)
             db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
 
             # Update weights and biases immediately
-            W = self.__weights['W' + str(lx)]
-            A_prev = cache['A' + str(lx - 1)]
+            W = self.__weights[f"W{lx}"]
+            A_prev = cache[f"A{lx - 1}"]
 
             # Calculate dZ for previous layer (if not the first layer)
             if lx > 1:
                 dZ = (W.T @ dZ) * A_prev * (1 - A_prev)
-            self.__weights['W' + str(lx)] -= alpha * dW
-            self.__weights['b' + str(lx)] -= alpha * db
+            self.__weights[f"W{lx}"] -= alpha * dW
+            self.__weights[f"b{lx}"] -= alpha * db
