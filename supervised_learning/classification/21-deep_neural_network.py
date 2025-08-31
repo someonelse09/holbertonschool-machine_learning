@@ -85,24 +85,36 @@ class DeepNeuralNetwork:
         return predictions, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates one pass of
-        gradient descent on the deep neural network"""
+        """Calculates one pass of gradient descent on the deep neural network"""
         m = Y.shape[1]
+
+        # Initialize dZ for output layer
         A_L = cache['A' + str(self.__L)]
         dZ = A_L - Y
-        gradients = {}
-        for lx in range(self.__L, 0, -1):
-            previous_A = cache['A' + str(lx - 1)]
-            dW = (1/m) * np.matmul(dZ, previous_A.T)
-            db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
 
+        # Store gradients for all layers
+        gradients = {}
+
+        # Loop 1: Calculate all gradients (backward pass)
+        for lx in range(self.__L, 0, -1):
+            # Get the previous layer's activations
+            previous_A = cache['A' + str(lx - 1)]
+
+            # Calculate gradients for current layer
+            dW = (1 / m) * np.matmul(dZ, previous_A.T)
+            db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
+
+            # Store gradients
             gradients['dW' + str(lx)] = dW
             gradients['db' + str(lx)] = db
 
+            # Calculate dZ for previous layer (if not the first layer)
             if lx > 1:
                 W = self.__weights['W' + str(lx)]
-                previous_A = cache['A' + str(lx - 1)]
-                dZ = np.matmul(W.T, dZ) * previous_A * (1 - previous_A)
+                A_prev = cache['A' + str(lx - 1)]
+                dZ = np.matmul(W.T, dZ) * A_prev * (1 - A_prev)
+
+        # Loop 2: Update all weights and biases
         for lx in range(1, self.__L + 1):
             self.__weights['W' + str(lx)] -= alpha * gradients['dW' + str(lx)]
             self.__weights['b' + str(lx)] -= alpha * gradients['db' + str(lx)]
