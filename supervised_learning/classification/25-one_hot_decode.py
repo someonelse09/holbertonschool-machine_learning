@@ -8,7 +8,7 @@ def one_hot_decode(one_hot):
     matrix into a vector of labels"""
     if not isinstance(one_hot, np.ndarray):
         return None
-    if one_hot.ndim != 2 and one_hot.size == 0:
+    if one_hot.ndim != 2 or one_hot.size == 0:
         return None
     classes, m = one_hot.shape
 
