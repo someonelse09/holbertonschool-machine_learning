@@ -102,11 +102,11 @@ class DeepNeuralNetwork:
             db = (1 / m) * np.sum(dZ, axis=1, keepdims=True)
 
             # Update weights and biases immediately
-            self.__weights['W' + str(lx)] -= alpha * dW
-            self.__weights['b' + str(lx)] -= alpha * db
+            W = self.__weights['W' + str(lx)]
+            A_prev = cache['A' + str(lx - 1)]
 
             # Calculate dZ for previous layer (if not the first layer)
             if lx > 1:
-                W = self.__weights['W' + str(lx)]
-                A_prev = cache['A' + str(lx - 1)]
                 dZ = np.matmul(W.T, dZ) * A_prev * (1 - A_prev)
+            self.__weights['W' + str(lx)] -= alpha * dW
+            self.__weights['b' + str(lx)] -= alpha * db
