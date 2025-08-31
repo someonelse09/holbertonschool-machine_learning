@@ -64,11 +64,7 @@ class DeepNeuralNetwork:
             previous_A = self.__cache['A' + str(lx - 1)]
 
             Z = np.matmul(W, previous_A) + b
-
-            if lx == self.__L:
-                A = 1 / (1 + np.exp(-Z))
-            else:
-                A = np.maximum(0, Z)
+            A = 1 / (1 + np.exp(-Z))
             self.__cache['A' + str(lx)] = A
         return self.__cache['A' + str(self.__L)], self.__cache
 
@@ -76,35 +72,34 @@ class DeepNeuralNetwork:
         """Calculates the cost of
         the model using logistic regression"""
         m = Y.shape[1]
-        cost = -((1/m)*(np.sum((1 - Y) * np.log(1.0000001 - A) + Y * np.log(A))))
+        cost = -((1/m)*(
+            np.sum((1 - Y) * np.log(1.0000001 - A) + Y * np.log(A))
+        ))
         return cost
 
     def evaluate(self, X, Y):
-        """Evaluates the deep neural network’s predictions"""
+        """Evaluates the neural network’s predictions"""
         Al, _ = self.forward_prop(X)
         predictions = np.where(Al >= 0.5, 1, 0)
         cost = self.cost(Y, Al)
         return predictions, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
-        """Calculates one pass of
-        gradient descent on the deep neural network"""
+        """Calculate one pass of gradient descent on the neural network."""
         m = Y.shape[1]
-        A_L = cache['A' + str(self.__L)]
-        dZ = A_L - Y
-        for lx in range(1, self.__L + 1):
-            previous_A = cache['A' + str(lx - 1)]
+        AL = cache['A{}'.format(self.__L)]
+        dZl = AL - Y
+        for i in range(self.__L, 0, -1):
+            Al = cache['A{}'.format(i-1)]
+            dwl = (dZl @ Al.T) / m
+            dbl = (np.sum(dZl, axis=1, keepdims=True)) / m
 
-            dW = (1/m) * np.matmul(dZ, previous_A.T)
-            db = (1/m) * np.sum(dZ, axis=1, keepdims=True)
-
-            self.__weights['W' + str(lx)] -= alpha * dW
-            self.__weights['b' + str(lx)] -= alpha * db
-            # Calculating dZ for the previous layer (if not the first layer)
-            if lx > 1:
-                W = self.__weights['W' + str(lx)]
-                previous_A = cache['A' + str(lx - 1)]
-                dZ = np.matmul(W.T, dZ) * previous_A * (1 - previous_A)
+            Al_prev = cache['A{}'.format(i-1)]
+            Wl = self.__weights['W{}'.format(i)]
+            if i > 1:
+                dZl = (Wl.T @ dZl) * (Al_prev * (1-Al_prev))
+            self.__weights['W{}'.format(i)] -= alpha * dwl
+            self.__weights['b{}'.format(i)] -= alpha * dbl
 
     def train(self, X, Y, iterations=5000, alpha=0.05):
         """Trains the deep neural network"""
