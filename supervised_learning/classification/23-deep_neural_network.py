@@ -138,5 +138,5 @@ class DeepNeuralNetwork:
             plt.ylabel("cost")
             plt.title("Training Cost")
             plt.show()
-
+        self.forward_prop(X)
         return self.evaluate(X, Y)
