@@ -87,12 +87,12 @@ class Neuron:
 
         costs = []
         iters = []
-        for iteration in range(iterations):
+        for iteration in range(iterations + 1):
             # Forward pass
             A = self.forward_prop(X)
             # Backward pass; updating W and b
             self.gradient_descent(X, Y, A, alpha)
-            if iteration % step == 0 or iteration == iterations - 1:
+            if iteration % step == 0 or iteration == iterations:
                 cost = self.cost(Y, A)
                 costs.append(cost)
                 iters.append(iteration)
