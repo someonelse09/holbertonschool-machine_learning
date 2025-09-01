@@ -118,10 +118,10 @@ class NeuralNetwork:
         costs = []
         iters = []
 
-        for iteration in range(iterations):
+        for iteration in range(iterations + 1):
             A1, A2 = self.forward_prop(X)
             self.gradient_descent(X, Y, A1, A2, alpha)
-            if iteration % step == 0 or iteration == iterations - 1:
+            if iteration % step == 0 or iteration == iterations:
                 cost = self.cost(Y, A2)
                 costs.append(cost)
                 iters.append(iteration)
