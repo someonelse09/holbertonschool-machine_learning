@@ -58,6 +58,7 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
+        """Forward propagation for multiclass classification"""
         self.__cache['A0'] = X
         for lx in range(1, self.__L + 1):
             W = self.__weights['W' + str(lx)]
@@ -66,7 +67,7 @@ class DeepNeuralNetwork:
 
             Z = np.matmul(W, A_prev) + b
             if lx == self.__L:
-                # Softmax for last layer
+                # Softmax for last layer (multiclass output)
                 exp_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
                 A = exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
             else:
@@ -77,17 +78,23 @@ class DeepNeuralNetwork:
         return self.__cache['A' + str(self.__L)], self.__cache
 
     def cost(self, Y, A):
-        """Calculates the cost of
-        the model using logistic regression"""
+        """Calculates the cost using categorical cross-entropy for multiclass"""
         m = Y.shape[1]
-        return -np.sum(Y * np.log(A + 1e-8)) / m
+        # Categorical cross-entropy loss
+        # Clip A to prevent log(0) while maintaining numerical stability
+        A_clipped = np.clip(A, 1e-15, 1 - 1e-15)
+        cost = -np.sum(Y * np.log(A_clipped)) / m
+        return cost
 
     def evaluate(self, X, Y):
-        """Evaluates the neural network’s predictions"""
-        Al, _ = self.forward_prop(X)
-        predictions = np.where(
-            Al == np.max(Al, axis=0, keepdims=True), 1, 0)
-        cost = self.cost(Y, Al)
+        """Evaluates the neural network's predictions for multiclass"""
+        A, _ = self.forward_prop(X)
+        # Convert softmax probabilities to one-hot predictions
+        predictions = np.zeros_like(A)
+        max_indices = np.argmax(A, axis=0)
+        predictions[max_indices, np.arange(A.shape[1])] = 1
+        
+        cost = self.cost(Y, A)
         return predictions, cost
 
     def gradient_descent(self, Y, cache, alpha=0.05):
