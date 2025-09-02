@@ -58,21 +58,21 @@ class DeepNeuralNetwork:
         return self.__weights
 
     def forward_prop(self, X):
-        """This method calculates the forward
-         propagation of the neural network"""
         self.__cache['A0'] = X
         for lx in range(1, self.__L + 1):
             W = self.__weights['W' + str(lx)]
             b = self.__weights['b' + str(lx)]
-            previous_A = self.__cache['A' + str(lx - 1)]
+            A_prev = self.__cache['A' + str(lx - 1)]
 
-            Z = np.matmul(W, previous_A) + b
+            Z = np.matmul(W, A_prev) + b
             if lx == self.__L:
+                # Softmax for last layer
                 exp_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
                 A = exp_Z / np.sum(exp_Z, axis=0, keepdims=True)
             else:
+                # Sigmoid for hidden layers
                 A = 1 / (1 + np.exp(-Z))
-            A = 1 / (1 + np.exp(-Z))
+
             self.__cache['A' + str(lx)] = A
         return self.__cache['A' + str(self.__L)], self.__cache
 
@@ -80,8 +80,7 @@ class DeepNeuralNetwork:
         """Calculates the cost of
         the model using logistic regression"""
         m = Y.shape[1]
-        cost = -(1/m)*np.sum(Y*np.log(A))
-        return cost
+        return -np.sum(Y * np.log(A + 1e-8)) / m
 
     def evaluate(self, X, Y):
         """Evaluates the neural network’s predictions"""
