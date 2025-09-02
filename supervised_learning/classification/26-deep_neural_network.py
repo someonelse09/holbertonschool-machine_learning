@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import os
 import pickle
 
+
 class DeepNeuralNetwork:
     """This class is for implementing
      multi-layered(more than two) Neural Networks"""
@@ -150,7 +151,6 @@ class DeepNeuralNetwork:
         with open(filename, "wb") as f:
             pickle.dump(self, f)
         return filename
-
 
     @staticmethod
     def load(filename):
