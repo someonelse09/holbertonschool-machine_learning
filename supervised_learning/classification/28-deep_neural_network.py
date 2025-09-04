@@ -89,7 +89,8 @@ class DeepNeuralNetwork:
         return self.__cache['A' + str(self.__L)], self.__cache
 
     def cost(self, Y, A):
-        """Calculates the cost using categorical cross-entropy for multiclass"""
+        """Calculates the cost
+        using categorical cross-entropy for multiclass"""
         m = Y.shape[1]
         # Categorical cross-entropy loss
         # Clip A to prevent log(0) while maintaining numerical stability
@@ -128,7 +129,7 @@ class DeepNeuralNetwork:
                 elif self.__activation == 'tanh':
                     # Tanh derivative: 1 - A^2
                     dZl = (Wl.T @ dZl) * (1 - Al_prev**2)
-            
+
             self.__weights['W{}'.format(i)] -= alpha * dwl
             self.__weights['b{}'.format(i)] -= alpha * dbl
 
