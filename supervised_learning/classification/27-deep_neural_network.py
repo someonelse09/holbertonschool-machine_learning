@@ -78,7 +78,8 @@ class DeepNeuralNetwork:
         return self.__cache['A' + str(self.__L)], self.__cache
 
     def cost(self, Y, A):
-        """Calculates the cost using categorical cross-entropy for multiclass"""
+        """Calculates the cost using
+        categorical cross-entropy for multiclass"""
         m = Y.shape[1]
         # Categorical cross-entropy loss
         # Clip A to prevent log(0) while maintaining numerical stability
@@ -93,7 +94,6 @@ class DeepNeuralNetwork:
         predictions = np.zeros_like(A)
         max_indices = np.argmax(A, axis=0)
         predictions[max_indices, np.arange(A.shape[1])] = 1
-        
         cost = self.cost(Y, A)
         return predictions, cost
 
