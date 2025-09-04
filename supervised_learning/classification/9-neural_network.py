@@ -53,4 +53,4 @@ class NeuralNetwork:
     def A2(self):
         """getter method for
         output layer's activated output"""
-        return self.__A2 
+        return self.__A2
