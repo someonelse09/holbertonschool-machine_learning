@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Converts a label vector into a one-hot matrix"""
+import tensorflow.keras as K
 
 
 def train_model(network, data, labels,
