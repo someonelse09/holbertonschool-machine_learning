@@ -20,8 +20,8 @@ def train_model(network, data, labels, batch_size,
     Returns:
         The History object generated after training the model"""
     history = network.fit(
-        x = x_train,
-        y = y_train,
+        x=data,
+        y=labels,
         batch_size=batch_size,
         epochs=epochs,
         verbose=verbose,
