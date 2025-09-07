@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Trains a model using mini-batch gradient descent
 with early stopping and learning rate decay"""
-import tensorflow.keras as tf
+import tensorflow.keras as K
 
 
 def train_model(network, data, labels, batch_size, epochs,
