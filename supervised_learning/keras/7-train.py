@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Converts a label vector into a one-hot matrix"""
+"""Trains a model using mini-batch gradient descent
+with early stopping and learning rate decay"""
 import tensorflow.keras as K
 
 
 def train_model(network, data, labels, batch_size, epochs,
                 validation_data=None, early_stopping=False,
-                patience=0, verbose=True, shuffle=False):
+                patience=0, learning_rate_decay=False,
+                alpha=0.1, decay_rate=1, verbose=True, shuffle=False):
     """Trains a model using mini-batch gradient descent
 
     Args:
@@ -15,9 +17,13 @@ def train_model(network, data, labels, batch_size, epochs,
         batch_size: size of batch for mini-batch training
         epochs: number of passes through data
         validation_data: data to validate model with, if not None
-        early_stopping: boolean indicating
-        whether early stopping should be used
+        early_stopping: boolean indicating whether
+        early stopping should be used
         patience: patience used for early stopping
+        learning_rate_decay: boolean indicating
+        whether learning rate decay should be used
+        alpha: initial learning rate
+        decay_rate: decay rate
         verbose: whether to print progress during training
         shuffle: whether to shuffle batches between epochs
 
@@ -32,6 +38,14 @@ def train_model(network, data, labels, batch_size, epochs,
             restore_best_weights=True
         )
         callbacks.append(early_stopping_callback)
+
+    if learning_rate_decay and validation_data is not None:
+        def scheduler(epoch):
+            """Learning rate scheduler using inverse time decay"""
+            return alpha/(1 + decay_rate*epoch)
+    lr_scheduler = K.callbacks.LearningRateScheduler(scheduler, verbose=1)
+    callbacks.append(lr_scheduler)
+
     history = network.fit(
         x=data,
         y=labels,
