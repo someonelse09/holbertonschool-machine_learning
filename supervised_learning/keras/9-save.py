@@ -1,4 +1,4 @@
-#!/usr/bin/env pytyhon3
+#!/usr/bin/env python3
 """This module contains functions
 to save and load Keras models"""
 
