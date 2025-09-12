@@ -3,7 +3,7 @@
 function create_RMSProp_op sets up the
 RMSProp optimization algorithm in TensorFlow"""
 
-import tensorflow.keras as K
+import tensorflow as tf
 
 
 def create_RMSProp_op(alpha, beta2, epsilon):
@@ -15,7 +15,7 @@ def create_RMSProp_op(alpha, beta2, epsilon):
     Returns:
          optimizer
     """
-    return K.optimizers.RMSprop(
+    return tf.keras.optimizers.RMSprop(
         learning_rate=alpha,
         rho=beta2,
         epsilon=epsilon
