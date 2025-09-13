@@ -11,7 +11,8 @@ def create_batch_norm_layer(prev, n, activation):
     Args:
         prev is the activated output of the previous layer
         n is the number of nodes in the layer to be created
-        activation is the activation function that should be used on the output of the layer
+        activation is the activation function that
+            should be used on the output of the layer
         you should use the tf.keras.layers.Dense layer
             as the base layer with kernel initializer
                 tf.keras.initializers.VarianceScaling(mode='fan_avg')
@@ -25,7 +26,7 @@ def create_batch_norm_layer(prev, n, activation):
     dense = tf.keras.layers.Dense(
         n,
         kernel_initializer=tf.keras.initializers.
-                           VarianceScaling(mode='fan_avg'),
+        VarianceScaling(mode='fan_avg'),
         use_bias=False  # We'll handle bias through beta parameter
     )(prev)
 
