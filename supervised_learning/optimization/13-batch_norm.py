@@ -4,7 +4,6 @@ that normalizes an unactivated output
 of a neural network using batch normalization"""
 
 import numpy as np
-import tensorflow as tf
 
 
 def batch_norm(Z, gamma, beta, epsilon):
