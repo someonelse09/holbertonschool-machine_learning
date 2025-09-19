@@ -3,9 +3,9 @@
 that calculates the F1 score
 of the confusion matrix"""
 
-import numpy as np
 sensitivity = __import__('1-sensitivity').sensitivity
 precision = __import__('2-precision.py').precision
+
 
 def f1_score(confusion):
     """
