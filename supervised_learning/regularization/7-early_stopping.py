@@ -2,12 +2,14 @@
 """This module includes the function that
 determines if you should stop gradient descent early"""
 
+
 def early_stopping(cost, opt_cost, threshold, patience, count):
     """
     Args:
         Early stopping should occur when the validation cost of the
-         network has not decreased relative to the optimal
-          validation cost by more than the threshold over a specific patience count
+         network has not decreased relative to the
+          optimal validation cost by more than
+           the threshold over a specific patience count
         cost is the current validation cost of the neural network
         opt_cost is the lowest recorded validation cost of the neural network
         threshold is the threshold used for early stopping
