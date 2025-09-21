@@ -5,7 +5,7 @@ creates a layer of a neural network using dropout"""
 import tensorflow as tf
 
 
-def dropout_create_layer(prev, n, activation, keep_prob,training=True):
+def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     """
     Args:
         prev is a tensor containing the output of the previous layer
