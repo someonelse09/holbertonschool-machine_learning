@@ -28,7 +28,6 @@ def dropout_forward_prop(X, weights, L, keep_prob):
         b = weights[f"b{i}"]
         previous_A = cache[f"A{i - 1}"]
         Z = np.dot(w, previous_A) + b
-        
         # Last layer uses softmax activation
         if i == L:
             exp_Z = np.exp(Z - np.max(Z, axis=0, keepdims=True))
