@@ -29,63 +29,30 @@ def convolve_channels(images, kernel, padding='same', stride=(1, 1)):
         a numpy.ndarray containing the convolved images
     """
     m, h, w, c = images.shape
-    kh, kw, kc = kernel.shape
+    kh, kw, c = kernel.shape
     sh, sw = stride
-    ph, pw = 0, 0
+    if padding == 'same':
+        ph = int(np.ceil(((h - 1) * sh + kh - h) / 2))
+        pw = int(np.ceil(((w - 1) * sw + kw - w) / 2))
 
-    if kc != c:
-        raise ValueError("Kernel channel dimension must match image channels")
+    if padding == 'valid':
+        ph = 0
+        pw = 0
 
-    # Determine padding amounts (we compute top/bottom and left/right separately
-    # so that odd total padding is split correctly)
-    if isinstance(padding, tuple) and len(padding) == 2:
+    if isinstance(padding, tuple):
         ph, pw = padding
-        pad_top, pad_bottom = ph, ph
-        pad_left, pad_right = pw, pw
-    elif padding == 'same':
-        # desired output sizes (ceil for stride > 1)
-        out_h = int(np.ceil(h / sh))
-        out_w = int(np.ceil(w / sw))
 
-        # total padding needed along height/width
-        pad_along_height = max((out_h - 1) * sh + kh - h, 0)
-        pad_along_width = max((out_w - 1) * sw + kw - w, 0)
+    new_w = (w + 2 * pw - kw) // sw + 1
+    new_h = (h + 2 * ph - kh) // sh + 1
+    convolved = np.zeros((m, new_h, new_w))
+    padded_images = np.pad(images,
+                           pad_width=((0, 0), (ph, ph),
+                                      (pw, pw), (0, 0)),
+                           mode='constant', constant_values=0)
 
-        # split into top/bottom and left/right (bottom/right gets the extra if odd)
-        pad_top = pad_along_height // 2
-        pad_bottom = pad_along_height - pad_top
-        pad_left = pad_along_width // 2
-        pad_right = pad_along_width - pad_left
-
-        # keep ph/pw as "nominal" symmetric amounts (for compatibility)
-        ph = pad_top
-        pw = pad_left
-    elif padding == 'valid':
-        pad_top = pad_bottom = pad_left = pad_right = 0
-        ph, pw = 0, 0
-    else:
-        raise ValueError("padding must be 'same', 'valid', or a tuple")
-
-    # Pad the images (channels not padded)
-    padded_images = np.pad(
-        images,
-        ((0, 0), (pad_top, pad_bottom), (pad_left, pad_right), (0, 0)),
-        mode='constant'
-    )
-
-    # Calculate output dimensions
-    padded_h, padded_w = padded_images.shape[1], padded_images.shape[2]
-    convolution_height = (padded_h - kh) // sh + 1
-    convolution_width = (padded_w - kw) // sw + 1
-
-    # Initialize output (single-channel result per image because channels are summed)
-    convolved_image = np.zeros((m, convolution_height, convolution_width))
-
-    for i in range(convolution_height):
-        for j in range(convolution_width):
-            # Extract patch from all images and channels
-            patch = padded_images[:, i * sh:i * sh + kh, j * sw:j * sw + kw, :]
-            # Convolve: sum over spatial dimensions (1,2) and channel dimension (3)
-            convolved_image[:, i, j] = np.sum(patch * kernel, axis=(1, 2, 3))
-
-    return convolved_image
+    for i in range(new_h):
+        for j in range(new_w):
+            convolved[:, i, j] = np.sum(padded_images[:, i * sh:i * sh + kh,
+                                        j * sw:j * sw + kw, :] *
+                                        kernel, axis=(1, 2, 3))
+    return convolved
