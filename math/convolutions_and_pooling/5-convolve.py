@@ -19,13 +19,13 @@ def convolve(images, kernel, padding='same', stride=(1, 1)):
         kh is the height of a kernel
         kw is the width of a kernel
         nc is the number of kernels
-        padding is either a tuple of (ph, pw), same, or valid
-        if same, performs a sameonvolution
-        if valid, performs a valid convotion
+        padding is either a tuple of (ph, pw), ‘same’, or ‘valid’
+        if ‘same’, performs a same convolution
+        if ‘valid’, performs a valid convolution
         if a tuple:
         ph is the padding for the height of the image
         pw is the padding for the width of the image
-        the image should be padded with 0s
+        the image should be padded with 0’s
         stride is a tuple of (sh, sw)
         sh is the stride for the height of the image
         sw is the stride for the width of the image
@@ -54,7 +54,12 @@ def convolve(images, kernel, padding='same', stride=(1, 1)):
 
     convolution_height = int(((h + 2*ph - kh) / sh) + 1)
     convolution_width = int(((w + 2*pw - kw) / sw) + 1)
-    padded_image = np.pad(images, ((0, 0), (ph, ph), (pw, pw), (0, 0)), mode='constant')
+    padded_image = np.pad(images,
+                          ((0, 0),
+                           (ph, ph),
+                           (pw, pw),
+                           (0, 0)),
+                          mode='constant')
 
     convolved_image = np.zeros((m, convolution_height, convolution_width, nc))
 
@@ -63,6 +68,7 @@ def convolve(images, kernel, padding='same', stride=(1, 1)):
             for k in range(nc):
                 patch = padded_image[:, i*sh:i*sh + kh, j*sw:j*sw + kw, :]
                 current_kernel = kernel[:, :, :, k]
-                convolved_image[:, i, j, k] += np.sum(patch * current_kernel, axis=(1, 2, 3))
+                convolved_image[:, i, j, k] += np.sum(
+                    patch * current_kernel, axis=(1, 2, 3)
+                )
     return convolved_image
-

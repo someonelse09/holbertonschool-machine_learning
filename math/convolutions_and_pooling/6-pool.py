@@ -39,7 +39,7 @@ def pool(images, kernel_shape, stride, mode='max'):
     pooled_images = np.zeros((m, convolution_height, convolution_width, c))
     for i in range(convolution_height):
         for j in range(convolution_width):
-            pool_region = images[:, i*sh:i*sh +kh, j*sw:j*sw + kw, :]
+            pool_region = images[:, i*sh:i*sh + kh, j*sw:j*sw + kw, :]
 
             if mode == 'max':
                 pooled_images[:, i, j, :] = np.max(pool_region, axis=(1, 2))
