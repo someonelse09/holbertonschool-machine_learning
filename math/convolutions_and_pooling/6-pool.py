@@ -33,8 +33,8 @@ def pool(images, kernel_shape, stride, mode='max'):
     kh, kw = kernel_shape
     sh, sw = stride
 
-    convolution_height = (h - kh) // 2 + 1
-    convolution_width = (w - kw) // 2 + 1
+    convolution_height = (h - kh) // sh + 1
+    convolution_width = (w - kw) // sw + 1
 
     pooled_images = np.zeros((m, convolution_height, convolution_width, c))
     for i in range(convolution_height):
