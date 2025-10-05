@@ -50,11 +50,7 @@ def pool_backward(dA, A_prev, kernel_shape, stride=(1, 1), mode='max'):
                     if mode == 'max':
                         # Extract the current window from A_prev
                         window = A_prev[example, i*sh:i*sh+kh, j*sw:j*sw+kw, k]
-
-                        # Create a mask from the maximum value
                         mask = (window == np.max(window))
-
-                        # Distribute the gradient to the position(s) of the max value
                         dA_prev[example, i*sh:i*sh+kh, j*sw:j*sw+kw, k] += \
                             mask * dA[example, i, j, k]
 

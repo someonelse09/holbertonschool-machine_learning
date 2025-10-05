@@ -2,7 +2,8 @@
 """This module includes the function that builds
 a modified version of the LeNet-5 architecture using keras"""
 
-import keras as K
+from tensorflow import keras as K
+
 
 def lenet5(X):
     """
