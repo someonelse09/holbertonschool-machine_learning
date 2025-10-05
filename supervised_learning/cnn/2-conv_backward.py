@@ -29,7 +29,8 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
          containing the biases applied to the convolution
         padding is a string that is either same or valid,
          indicating the type of padding used
-        stride is a tuple of (sh, sw) containing the strides for the convolution
+        stride is a tuple of (sh, sw)
+         containing the strides for the convolution
         sh is the stride for the height
         sw is the stride for the width
         may import numpy as np
@@ -64,7 +65,8 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
                 patch = A_padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw, :]
                 sl = dZ[:, i, j, k][:, np.newaxis, np.newaxis, np.newaxis]
                 dW[:, :, :, k] += np.sum(patch * sl, axis=0)
-                dA_padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw, :] += W[:, :, :, k] * sl
+                dA_padded[:, i*sh:i*sh+kh, j*sw:j*sw+kw, :] += \
+                    W[:, :, :, k] * sl
     # removing padding from dA_padded
     if padding == 'same':
         dA_prev = dA_padded[:, ph:ph+h_prev, pw:pw+w_prev, :]
