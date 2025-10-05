@@ -73,5 +73,3 @@ def conv_backward(dZ, A_prev, W, b, padding="same", stride=(1, 1)):
     else:
         dA_prev = dA_padded
     return dA_prev, dW, db
-
-
