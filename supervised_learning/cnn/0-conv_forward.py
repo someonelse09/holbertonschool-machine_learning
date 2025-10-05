@@ -48,12 +48,11 @@ def conv_forward(A_prev, W, b, activation, padding="same", stride=(1, 1)):
         ph, pw = 0, 0
     else:
         raise ValueError("padding should be either same or valid")
-    padded_image = np.pad(A_prev,
-                         ((0, 0),
-                         (ph, ph),
-                         (pw, pw),
-                         (0, 0)),
-                         mode='constant')
+    padded_image = np.pad(A_prev, ((0, 0),
+                                   (ph, ph),
+                                   (pw, pw),
+                                   (0, 0)),
+                          mode='constant')
     convolution_height = int((h_prev + 2 * ph - kh) / sh) + 1
     convolution_width = int((w_prev + 2 * pw - kw) / sw) + 1
     convolved_layer = \
