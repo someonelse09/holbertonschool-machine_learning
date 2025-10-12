@@ -2,7 +2,6 @@
 """This module includes the function that
 builds the DenseNet-121 architecture
 as described in Densely Connected Convolutional Networks"""
-
 from tensorflow import keras as K
 dense_block = __import__('5-dense_block').dense_block
 transition_layer = __import__('6-transition_layer').transition_layer
