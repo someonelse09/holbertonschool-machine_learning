@@ -7,6 +7,7 @@ from tensorflow import keras as K
 dense_block = __import__('5-dense_block').dense_block
 transition_layer = __import__('6-transition_layer').transition_layer
 
+
 def densenet121(growth_rate=32, compression=1.0):
     """
     Args:
@@ -38,7 +39,7 @@ def densenet121(growth_rate=32, compression=1.0):
         kernel_initializer=initializer
     )(X)
 
-    pool = K.layers.MaxPooling2D(
+    X = K.layers.MaxPooling2D(
         pool_size=(3, 3),
         strides=(2, 2),
         padding='same',
