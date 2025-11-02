@@ -68,76 +68,53 @@ class Yolo:
               box's class probabilities for each output, respectively
         """
         image_h, image_w = image_size
-        input_h = self.model.input.shape[1]
-        input_w = self.model.input.shape[2]
-
-        processed_boxes = []
-        box_confidence_list = []
-        box_class_probs_list = []
+        boxes = []
+        box_confidences = []
+        box_class_probs = []
 
         for i, output in enumerate(outputs):
-            grid_h, grid_w, num_anchors, _ = output.shape
+            grid_h, grid_w, anchor_boxes, _ = output.shape
 
-            # 1. Splitting raw predictions
-            t_xy = output[..., :2]
-            t_wh = output[..., 2:4]
-            box_confidences = output[..., 4:5]
-            box_class_probs = output[..., 5:]
+            # Extract predictions
+            tx = output[..., 0]
+            ty = output[..., 1]
+            tw = output[..., 2]
+            th = output[..., 3]
+            object_confidence = output[..., 4:5]
+            class_probs = output[..., 5:]
 
-            # 2. Applying sigmoid activation
-            t_xy = 1.0 / (1.0 + np.exp(-t_xy))
-            box_confidences = 1.0 / (1.0 + np.exp(-box_confidences))
-            box_class_probs = 1.0 / (1.0 + np.exp(-box_class_probs))
+            # Create grid
+            cx = np.tile(np.arange(grid_w).reshape(1, grid_w, 1),
+                         (grid_h, 1, anchor_boxes))
+            cy = np.tile(np.arange(grid_h).reshape(grid_h, 1, 1),
+                         (1, grid_w, anchor_boxes))
 
-            box_confidence_list.append(box_confidences)
-            box_class_probs_list.append(box_class_probs)
+            # Get anchors for this layer
+            anchors = self.anchors[i]
 
-            # 3. Create grid for cell offsets
-            col = np.arange(grid_w).reshape(1, grid_w, 1)
-            col = np.tile(col, [grid_h, 1, num_anchors])
-            row = np.arange(grid_h).reshape(grid_h, 1, 1)
-            row = np.tile(row, [1, grid_w, num_anchors])
+            # Calculate box center (normalized to 0-1)
+            bx = (1 / (1 + np.exp(-tx)) + cx) / grid_w
+            by = (1 / (1 + np.exp(-ty)) + cy) / grid_h
 
-            # 4. Calculate box center coordinates
-            # bx = sigmoid(tx) + cx
-            # by = sigmoid(ty) + cy
-            box_xy = np.zeros_like(t_xy)
-            box_xy[..., 0] = t_xy[..., 0] + col
-            box_xy[..., 1] = t_xy[..., 1] + row
+            # Calculate box dimensions (normalized to 0-1)
+            bw = (anchors[:, 0] * np.exp(tw)) / self.model.input.shape[1]
+            bh = (anchors[:, 1] * np.exp(th)) / self.model.input.shape[2]
 
-            # Normalize to grid
-            box_xy[..., 0] /= grid_w
-            box_xy[..., 1] /= grid_h
+            # Convert to corner coordinates in image space
+            x1 = (bx - bw / 2) * image_w
+            y1 = (by - bh / 2) * image_h
+            x2 = (bx + bw / 2) * image_w
+            y2 = (by + bh / 2) * image_h
 
-            # 5. Calculate box dimensions
-            # bw = pw * e^(tw)
-            # bh = ph * e^(th)
-            anchors_layer = self.anchors[i]
-            box_wh = anchors_layer * np.exp(t_wh)
+            # Stack into box format
+            box = np.stack((x1, y1, x2, y2), axis=-1)
+            boxes.append(box)
 
-            # Normalize by input dimensions
-            box_wh[..., 0] /= input_w
-            box_wh[..., 1] /= input_h
+            # Apply sigmoid to confidences and class probabilities
+            box_confidences.append(1 / (1 + np.exp(-object_confidence)))
+            box_class_probs.append(1 / (1 + np.exp(-class_probs)))
 
-            # 6. Convert from center coords to corner coords
-            # x1 = (bx - bw/2) * image_w
-            # y1 = (by - bh/2) * image_h
-            # x2 = (bx + bw/2) * image_w
-            # y2 = (by + bh/2) * image_h
-            box_xy[..., 0] *= image_w
-            box_xy[..., 1] *= image_h
-            box_wh[..., 0] *= image_w
-            box_wh[..., 1] *= image_h
-
-            x1 = box_xy[..., 0] - box_wh[..., 0] / 2
-            y1 = box_xy[..., 1] - box_wh[..., 1] / 2
-            x2 = box_xy[..., 0] + box_wh[..., 0] / 2
-            y2 = box_xy[..., 1] + box_wh[..., 1] / 2
-
-            processed_box = np.stack([x1, y1, x2, y2], axis=-1)
-            processed_boxes.append(processed_box)
-
-        return processed_boxes, box_confidence_list, box_class_probs_list
+        return boxes, box_confidences, box_class_probs
 
     def filter_boxes(self, boxes, box_confidences, box_class_probs):
         """
@@ -190,3 +167,4 @@ class Yolo:
         box_scores = np.concatenate(box_scores, axis=0)
 
         return filtered_boxes, box_classes, box_scores
+
