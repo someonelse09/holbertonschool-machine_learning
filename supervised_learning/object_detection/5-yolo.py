@@ -324,7 +324,8 @@ class Yolo:
                 the original height and width of the images
         """
         # FIX: Swapped H and W indices to match the working version's logic
-        # This assumes your model input shape is (batch, Width, Height, Channels)
+        # This assumes your model input shape is
+        # (batch, Width, Height, Channels)
         # OR this is done to ensure the cv2.resize call (W, H) is correct
         input_w = self.model.input.shape[1]  # <--- Index 1 is W
         input_h = self.model.input.shape[2]  # <--- Index 2 is H
