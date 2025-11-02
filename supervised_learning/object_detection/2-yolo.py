@@ -51,7 +51,7 @@ class Yolo:
             4 => (t_x, t_y, t_w, t_h)
             1 => box_confidence
             classes => class probabilities for all classes
-            image_size is a numpy.ndarray containing the image’s
+            image_size is a numpy.ndarray containing the image's
              original size [image_height, image_width]
         Returns a tuple of (boxes, box_confidences, box_class_probs):
             boxes: a list of numpy.ndarrays of shape (grid_height,
@@ -65,25 +65,26 @@ class Yolo:
               the box confidences for each output, respectively
             box_class_probs: a list of numpy.ndarrays of shape (grid_height,
              grid_width, anchor_boxes, classes) containing the
-              box’s class probabilities for each output, respectively
+              box's class probabilities for each output, respectively
         """
-        model_size = 416
         image_h, image_w = image_size
+        input_h = self.model.input.shape[1]
+        input_w = self.model.input.shape[2]
 
         processed_boxes = []
         box_confidence_list = []
         box_class_probs_list = []
 
         for i, output in enumerate(outputs):
-            grid_h, grid_w, anchors, _ = output.shape
-            # 1. Splitting row predictions
+            grid_h, grid_w, num_anchors, _ = output.shape
+
+            # 1. Splitting raw predictions
             t_xy = output[..., :2]
             t_wh = output[..., 2:4]
             box_confidences = output[..., 4:5]
             box_class_probs = output[..., 5:]
 
-            # 2. Applying activation functions Sigmoid
-            # for t_x, t_y, box confidences and probabilities
+            # 2. Applying sigmoid activation
             t_xy = 1.0 / (1.0 + np.exp(-t_xy))
             box_confidences = 1.0 / (1.0 + np.exp(-box_confidences))
             box_class_probs = 1.0 / (1.0 + np.exp(-box_class_probs))
@@ -91,50 +92,49 @@ class Yolo:
             box_confidence_list.append(box_confidences)
             box_class_probs_list.append(box_class_probs)
 
-            # 3. Calculating grid coordinates (c_x, c_y)
-            # cy, cx: grid indices (0 to grid_h-1, 0 to grid_w-1)
-            cy, cx = np.indices((grid_h, grid_w))
-            # Stack and expand process in order to match the shape t_xy
-            # shape: (grid_h, grid_w, 2) -> (grid_h, grid_w, 1, 2)
-            c_xy = np.stack([cx, cy], axis=-1)
-            c_xy = np.expand_dims(c_xy, axis=2)
+            # 3. Create grid for cell offsets
+            col = np.arange(grid_w).reshape(1, grid_w, 1)
+            col = np.tile(col, [grid_h, 1, num_anchors])
+            row = np.arange(grid_h).reshape(grid_h, 1, 1)
+            row = np.tile(row, [1, grid_w, num_anchors])
 
-            # 4. Calculating box center (b_x, b_y) in grid units
-            b_xy_grid = t_xy + c_xy
+            # 4. Calculate box center coordinates
+            # bx = sigmoid(tx) + cx
+            # by = sigmoid(ty) + cy
+            box_xy = np.zeros_like(t_xy)
+            box_xy[..., 0] = t_xy[..., 0] + col
+            box_xy[..., 1] = t_xy[..., 1] + row
 
-            # 5. Calculating box dimensions (b_w, b_h) in model-input pixels
-            anchors_layer = self.anchors[i]  # shape (n_anchors, 2)
-            b_wh_model = anchors_layer * np.exp(t_wh)
-            # 6. Convert to absolute (x_c, y_c, w, h) in model-input pixels
-            # Strides to scale from grid units back to 416x416 pixel units
-            stride_h = model_size / grid_h
-            stride_w = model_size / grid_w
+            # Normalize to grid
+            box_xy[..., 0] /= grid_w
+            box_xy[..., 1] /= grid_h
 
-            # Center coordinates (x_c, y_c) in model-input pixels
-            b_x = b_xy_grid[..., 0] * stride_w
-            b_y = b_xy_grid[..., 1] * stride_h
-            # Combining all coordinates
-            b_xywh_model = np.stack([b_x, b_y, b_wh_model[..., 0], b_wh_model[..., 1]], axis=-1)
+            # 5. Calculate box dimensions
+            # bw = pw * e^(tw)
+            # bh = ph * e^(th)
+            anchors_layer = self.anchors[i]
+            box_wh = anchors_layer * np.exp(t_wh)
 
-            # 7. Converting (x_c, y_c, w, h) to
-            # (x1, y1, x2, y2) in model-input pixels
-            x1 = b_xywh_model[..., 0] - b_xywh_model[..., 2] / 2
-            y1 = b_xywh_model[..., 1] - b_xywh_model[..., 3] / 2
-            x2 = b_xywh_model[..., 0] + b_xywh_model[..., 2] / 2
-            y2 = b_xywh_model[..., 1] + b_xywh_model[..., 3] / 2
+            # Normalize by input dimensions
+            box_wh[..., 0] /= input_w
+            box_wh[..., 1] /= input_h
 
-            # Create processed box (x1, y1, x2, y2) in 416x416 space
+            # 6. Convert from center coords to corner coords
+            # x1 = (bx - bw/2) * image_w
+            # y1 = (by - bh/2) * image_h
+            # x2 = (bx + bw/2) * image_w
+            # y2 = (by + bh/2) * image_h
+            box_xy[..., 0] *= image_w
+            box_xy[..., 1] *= image_h
+            box_wh[..., 0] *= image_w
+            box_wh[..., 1] *= image_h
+
+            x1 = box_xy[..., 0] - box_wh[..., 0] / 2
+            y1 = box_xy[..., 1] - box_wh[..., 1] / 2
+            x2 = box_xy[..., 0] + box_wh[..., 0] / 2
+            y2 = box_xy[..., 1] + box_wh[..., 1] / 2
+
             processed_box = np.stack([x1, y1, x2, y2], axis=-1)
-
-            # 8. Rescale to original image size
-            scale_w = image_w / model_size
-            scale_h = image_h / model_size
-            # Scaling x and y coordinates by scale_w and scale_h, respectively
-            processed_box[..., 0] *= scale_w
-            processed_box[..., 2] *= scale_w
-            processed_box[..., 1] *= scale_h
-            processed_box[..., 3] *= scale_h
-
             processed_boxes.append(processed_box)
 
         return processed_boxes, box_confidence_list, box_class_probs_list
