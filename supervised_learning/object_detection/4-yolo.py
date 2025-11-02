@@ -26,10 +26,12 @@ class Yolo:
               listed in order of index, can be found
             class_t is a float representing the box score
              threshold for the initial filtering step
-            nms_t is a float representing the IOU threshold for non-max suppression
+            nms_t is a float representing the IOU
+             threshold for non-max suppression
             anchors is a numpy.ndarray of shape (outputs, anchor_boxes, 2)
              containing all of the anchor boxes:
-            outputs is the number of outputs (predictions) made by the Darknet model
+            outputs is the number of outputs
+             (predictions) made by the Darknet model
             anchor_boxes is the number of anchor boxes used for each prediction
             2 => [anchor_box_width, anchor_box_height]
         """
@@ -157,7 +159,8 @@ class Yolo:
             filtered_boxes: a numpy.ndarray of shape (?, 4)
              containing all of the filtered bounding boxes:
             box_classes: a numpy.ndarray of shape (?,) containing the
-             class number that each box in filtered_boxes predicts, respectively
+             class number that each box in
+              filtered_boxes predicts, respectively
             box_scores: a numpy.ndarray of shape (?) containing the
              box scores for each box in filtered_boxes, respectively
         """
@@ -167,7 +170,8 @@ class Yolo:
         for i in range(len(boxes)):
             # Calculating box scores: confidence * class_probability
             # box_confidences[i]: (grid_height, grid_width, anchor_boxes, 1)
-            # box_class_probs[i]: (grid_height, grid_width, anchor_boxes, classes)
+            # box_class_probs[i]: (grid_height,
+            # grid_width, anchor_boxes, classes)
             scores = box_confidences[i] * box_class_probs[i]
 
             # We need to get the class with maximum score for each box
@@ -199,7 +203,8 @@ class Yolo:
             filtered_boxes: a numpy.ndarray of shape (?, 4)
              containing all of the filtered bounding boxes:
             box_classes: a numpy.ndarray of shape (?,) containing the
-             class number for the class that filtered_boxes predicts, respectively
+             class number for the class that
+              filtered_boxes predicts, respectively
             box_scores: a numpy.ndarray of shape (?) containing
              the box scores for each box in filtered_boxes, respectively
         Returns a tuple of (box_predictions,
@@ -262,13 +267,17 @@ class Yolo:
         predicted_box_scores = np.concatenate(predicted_box_scores, axis=0)
 
         return box_predictions, predicted_box_classes, predicted_box_scores
+
     def _iou(self, box, boxes):
         """
-                Calculate Intersection over Union between one box and multiple boxes
+                Calculate Intersection over Union
+                between one box and multiple boxes
 
                 Args:
-                    box: numpy.ndarray of shape (4,) representing one box [x1, y1, x2, y2]
-                    boxes: numpy.ndarray of shape (?, 4) representing multiple boxes
+                    box: numpy.ndarray of shape (4,)
+                    representing one box [x1, y1, x2, y2]
+                    boxes: numpy.ndarray of shape (?, 4)
+                    representing multiple boxes
 
                 Returns:
                     numpy.ndarray of shape (?,) containing IoU values
