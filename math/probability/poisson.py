@@ -2,12 +2,15 @@
 """This module includes the class Poisson
 that represents a poisson distribution"""
 
+
 def factorial(n):
     if n == 0:
         return 1
     return n * factorial(n - 1)
 
+
 class Poisson:
+    """Poisson Distribution"""
     def __init__(self, data=None, lambtha=1.):
         """
         Args:
