@@ -2,8 +2,10 @@
 """This module includes the class Poisson
 that represents a poisson distribution"""
 
-import numpy as np
-import math
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n - 1)
 
 class Poisson:
     def __init__(self, data=None, lambtha=1.):
@@ -52,12 +54,13 @@ class Poisson:
         Returns:
             the PMF value for k
         """
+        e = 2.7182818285
         if not isinstance(k, int):
             k = int(k)
         if k < 0:
             return 0
-        pmf = (np.exp(-self.lambtha) *
-               self.lambtha ** k) / math.factorial(k)
+        pmf = ((e ** (-self.lambtha)) *
+               self.lambtha ** k) / factorial(k)
         return pmf
 
     def cdf(self, k):
