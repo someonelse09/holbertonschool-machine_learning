@@ -4,6 +4,7 @@ that represents a poisson distribution"""
 
 
 def factorial(n):
+    """Calculating Factorial recursively"""
     if n == 0:
         return 1
     return n * factorial(n - 1)
