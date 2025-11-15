@@ -88,6 +88,6 @@ class Binomial:
             the CDF value for k
         """
         cdf = 0
-        for i in range(k + 1):
+        for i in range(1, k + 1):
             cdf += self.pmf(i)
         return cdf
