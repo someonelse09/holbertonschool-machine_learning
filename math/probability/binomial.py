@@ -4,6 +4,7 @@ that represents a binomial distribution"""
 
 
 def factorial(n):
+    """Calculating Factorial"""
     res = 1
     for i in range(2, n + 1):
         res *= i
@@ -11,7 +12,8 @@ def factorial(n):
 
 
 def combination(n, k):
-    return factorial(n) / (factorial(k) * factorial(n - k))
+    """Calculating combination of n taken by k"""
+    return factorial(n) // (factorial(k) * factorial(n - k))
 
 
 class Binomial:
@@ -74,6 +76,8 @@ class Binomial:
         Returns:
             the PMF value for k
         """
+        if not isinstance(k, int):
+            k = int(k)
         c = combination(self.n, k)
         pmf = c * (self.p ** k) * ((1 - self.p) ** (self.n - k))
         return pmf
@@ -87,6 +91,8 @@ class Binomial:
         Returns:
             the CDF value for k
         """
+        if not isinstance(k, int):
+            k = int(k)
         cdf = 0
         for i in range(1, k + 1):
             cdf += self.pmf(i)
