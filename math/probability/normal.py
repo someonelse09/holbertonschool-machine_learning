@@ -4,6 +4,8 @@ that represents a normal distribution"""
 
 pi = 3.1415926535
 e = 2.7182818285
+
+
 class Normal:
     """Gaussian Distribution"""
     def __init__(self, data=None, mean=0., stddev=1.):
@@ -79,7 +81,11 @@ class Normal:
         """Approximates the error function"""
         pi = 3.1415926535
         coef = 2 / (pi ** 0.5)
-        return coef * (x - (x ** 3) / 3 + (x ** 5) / 10 - (x ** 7) / 42 + (x ** 9) / 216)
+        first = (x ** 3) / 3
+        second = (x ** 5) / 10
+        third = (x ** 7) / 42
+        fourth = (x ** 9) / 216
+        return coef * (x - first + second - third + fourth)
 
     def cdf(self, x):
         """Calculates the CDF for a given x-value"""
