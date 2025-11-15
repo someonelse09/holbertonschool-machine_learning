@@ -18,7 +18,7 @@ def combination(n, k):
 
 class Binomial:
     """Binomial Distribution"""
-    def __init__(self,data=None, n=1, p=0.5):
+    def __init__(self, data=None, n=1, p=0.5):
         """
         Args:
             ata is a list of the data to be used to estimate the distribution
@@ -35,7 +35,7 @@ class Binomial:
             If data is given:
             Calculate n and p from data
             Round n to the nearest integer
-             (rounded, not casting! int(3.7)
+             (rounded, not casting! : int(3.7)
               is not the same as round(3.7))
             Hint: Calculate p first and then calculate n.
              Then recalculate p. Think about
@@ -78,6 +78,8 @@ class Binomial:
         """
         if not isinstance(k, int):
             k = int(k)
+        if k < 0 or k > self.n:
+            return 0
         c = combination(self.n, k)
         pmf = c * (self.p ** k) * ((1 - self.p) ** (self.n - k))
         return pmf
@@ -93,6 +95,8 @@ class Binomial:
         """
         if not isinstance(k, int):
             k = int(k)
+        if k < 0:  # Add this check
+            return 0
         cdf = 0
         for i in range(k + 1):
             cdf += self.pmf(i)
