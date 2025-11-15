@@ -94,6 +94,6 @@ class Binomial:
         if not isinstance(k, int):
             k = int(k)
         cdf = 0
-        for i in range(1, k + 1):
+        for i in range(k + 1):
             cdf += self.pmf(i)
         return cdf
