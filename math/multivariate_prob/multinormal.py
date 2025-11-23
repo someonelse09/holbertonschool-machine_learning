@@ -61,7 +61,6 @@ class MultiNormal:
         if x.shape != (d, 1):
             raise ValueError("x must have the shape ({}, 1)".format(d))
 
-
         # Calculate determinant of covariance matrix
         det_cov = np.linalg.det(self.cov)
 
