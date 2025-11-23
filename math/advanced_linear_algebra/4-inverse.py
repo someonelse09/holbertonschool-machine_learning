@@ -21,8 +21,12 @@ def determinant(matrix):
         return 1
     if not all(isinstance(row, list) for row in matrix):
         raise TypeError("matrix must be a list of lists")
-    if len(matrix) != len(matrix[0]):
-        raise ValueError("matrix must be a square matrix")
+    
+    # Check all rows have same length
+    n = len(matrix)
+    for row in matrix:
+        if len(row) != n:
+            raise ValueError("matrix must be a square matrix")
 
     if len(matrix) == 1:
         return matrix[0][0]
@@ -56,16 +60,19 @@ def minor(matrix):
         raise TypeError("matrix must be a list of lists")
     if matrix == [] or matrix == [[]]:
         raise ValueError("matrix must be a non-empty square matrix")
-    if len(matrix) != len(matrix[0]):
-        raise ValueError("matrix must be a non-empty square matrix")
-    size = len(matrix)
-    if size == 1:
+    
+    n = len(matrix)
+    for row in matrix:
+        if len(row) != n:
+            raise ValueError("matrix must be a non-empty square matrix")
+    
+    if n == 1:
         return [[1]]
 
     minor_matrix = []
-    for i in range(len(matrix)):
+    for i in range(n):
         row_i_of_minor = []
-        for j in range(len(matrix[0])):
+        for j in range(n):
             sub = [row[:j] + row[j+1:]
                    for k, row in enumerate(matrix)
                    if k != i]
@@ -91,17 +98,20 @@ def cofactor(matrix):
         raise TypeError("matrix must be a list of lists")
     if matrix == [] or matrix == [[]]:
         raise ValueError("matrix must be a non-empty square matrix")
-    if len(matrix) != len(matrix[0]):
-        raise ValueError("matrix must be a non-empty square matrix")
+    
+    n = len(matrix)
+    for row in matrix:
+        if len(row) != n:
+            raise ValueError("matrix must be a non-empty square matrix")
 
     minor_matrix = minor(matrix)
-    cofactor = []
-    for i in range(len(matrix)):
+    cofactor_matrix = []
+    for i in range(n):
         cofactor_row = []
-        for j in range(len(matrix[0])):
+        for j in range(n):
             cofactor_row.append(((-1) ** (i+j)) * minor_matrix[i][j])
-        cofactor.append(cofactor_row)
-    return cofactor
+        cofactor_matrix.append(cofactor_row)
+    return cofactor_matrix
 
 
 def adjugate(matrix):
@@ -120,8 +130,11 @@ def adjugate(matrix):
         raise TypeError("matrix must be a list of lists")
     if matrix == [] or matrix == [[]]:
         raise ValueError("matrix must be a non-empty square matrix")
-    if len(matrix) != len(matrix[0]):
-        raise ValueError("matrix must be a non-empty square matrix")
+    
+    n = len(matrix)
+    for row in matrix:
+        if len(row) != n:
+            raise ValueError("matrix must be a non-empty square matrix")
 
     cofact = cofactor(matrix)
     adj = [[row[j] for row in cofact] for j in range(len(cofact[0]))]
@@ -146,12 +159,10 @@ def inverse(matrix):
         raise TypeError("matrix must be a list of lists")
     if matrix == [] or matrix == [[]]:
         raise ValueError("matrix must be a non-empty square matrix")
-    if len(matrix) != len(matrix[0]):
-        raise ValueError("matrix must be a non-empty square matrix")
     
-    # Check for non-square rows
+    n = len(matrix)
     for row in matrix:
-        if len(row) != len(matrix):
+        if len(row) != n:
             raise ValueError("matrix must be a non-empty square matrix")
     
     deter = determinant(matrix)
@@ -160,9 +171,9 @@ def inverse(matrix):
     
     adjugate_matrix = adjugate(matrix)
     inverse_matrix = []
-    for i in range(len(matrix)):
+    for i in range(n):
         inverted_row = []
-        for j in range(len(matrix[0])):
-            inverted_row.append((1 / deter) * adjugate_matrix[i][j])
+        for j in range(n):
+            inverted_row.append(adjugate_matrix[i][j] / deter)
         inverse_matrix.append(inverted_row)
     return inverse_matrix
