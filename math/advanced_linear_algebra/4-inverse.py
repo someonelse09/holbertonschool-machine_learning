@@ -128,6 +128,7 @@ def adjugate(matrix):
 
     return adj
 
+
 def inverse(matrix):
     """
     Args:
@@ -147,14 +148,21 @@ def inverse(matrix):
         raise ValueError("matrix must be a non-empty square matrix")
     if len(matrix) != len(matrix[0]):
         raise ValueError("matrix must be a non-empty square matrix")
+    
+    # Check for non-square rows
+    for row in matrix:
+        if len(row) != len(matrix):
+            raise ValueError("matrix must be a non-empty square matrix")
+    
     deter = determinant(matrix)
     if deter == 0:
         return None
+    
     adjugate_matrix = adjugate(matrix)
-    inverse = []
+    inverse_matrix = []
     for i in range(len(matrix)):
         inverted_row = []
         for j in range(len(matrix[0])):
             inverted_row.append((1 / deter) * adjugate_matrix[i][j])
-        inverse.append(inverted_row)
-    return inverse
+        inverse_matrix.append(inverted_row)
+    return inverse_matrix
