@@ -3,9 +3,9 @@
 and are looking to find the probability that a patient who takes
 this drug will develop severe side effects. During your trials,
 n patients take the drug and x patients develop severe side effects.
-You can assume that x follows a binomial distribution."""
+You can assume that x follows a binomial distribution.
 
-"""This module includes the function likelihood that
+This module includes the function likelihood that
 calculates the likelihood of obtaining this data given
 various hypothetical probabilities of developing severe side effects"""
 
@@ -47,7 +47,8 @@ def likelihood(x, n, P):
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
     if not isinstance(x, int) or x < 0:
-        raise ValueError("x must be an integer that is greater than or equal to 0")
+        raise ValueError("x must be an integer"
+                         "that is greater than or equal to 0")
     if x > n:
         raise ValueError("x cannot be greater than n")
     if not isinstance(P, np.ndarray) or len(P.shape) != 1:
