@@ -1,7 +1,4 @@
-#!/usr/bin/python3
-
-import numpy as np
-
+#!/usr/bin/env python3
 """You are conducting a study on a revolutionary cancer drug
 and are looking to find the probability that a patient who takes
 this drug will develop severe side effects. During your trials,
@@ -11,6 +8,8 @@ You can assume that x follows a binomial distribution."""
 """This module includes the function likelihood that
 calculates the likelihood of obtaining this data given
 various hypothetical probabilities of developing severe side effects"""
+
+import numpy as np
 
 
 def factorial(m):

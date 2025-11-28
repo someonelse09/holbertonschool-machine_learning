@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-
-import numpy as np
-
 """This module includes the function marginal that
 calculates the marginal probability of obtaining
 the data Based on 1-intersection.py"""
+
+import numpy as np
 
 
 def factorial(m):
@@ -48,7 +47,7 @@ def marginal(x, n, P, Pr):
     """
     if not isinstance(n, int) or n <= 0:
         raise ValueError("n must be a positive integer")
-    if not isinstance(x, int) or n < 0:
+    if not isinstance(x, int) or x < 0:
         raise ValueError("x must be an integer that is greater than or equal to 0")
     if x > n:
         raise ValueError("x cannot be greater than n")

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-
-import numpy as np
-
 """This module contains the function intersection that
 calculates the intersection of obtaining this data with
 the various hypothetical probabilities based on 0-likelihood.py"""
+
+import numpy as np
 
 
 def factorial(m):
