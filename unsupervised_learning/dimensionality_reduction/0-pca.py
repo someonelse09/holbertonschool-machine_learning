@@ -27,4 +27,3 @@ def pca(X, var=0.95):
     nd = np.argwhere(variance >= var)[0, 0] + 1
     w = v.T[:, :nd]
     return w
-
