@@ -19,8 +19,6 @@ def optimum_k(X, kmin=1, kmax=None, iterations=1000):
          number of iterations for K-means
         This function should analyze at least 2 different cluster sizes
         You should use:
-        kmeans = __import__('1-kmeans').kmeans
-        variance = __import__('2-variance').variance
         You may use at most 2 loops
     Returns:
         results, d_vars, or None, None on failure
