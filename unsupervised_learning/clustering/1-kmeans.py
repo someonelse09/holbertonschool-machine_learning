@@ -21,13 +21,10 @@ def kmeans(X, k, iterations=1000):
         clss: numpy.ndarray of shape (n,) containing the cluster index for each point
         Returns None, None on failure
     """
-    # Input validation
     if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None
-
     if not isinstance(k, int) or k <= 0:
         return None, None
-
     if not isinstance(iterations, int) or iterations <= 0:
         return None, None
 
@@ -36,41 +33,29 @@ def kmeans(X, k, iterations=1000):
     if k > n:
         return None, None
 
-    # Initialize centroids using multivariate uniform distribution
     min_vals = np.min(X, axis=0)
     max_vals = np.max(X, axis=0)
-    C = np.random.uniform(low=min_vals, high=max_vals, size=(k, d))
 
-    # Perform K-means iterations
+    C = np.random.uniform(min_vals, max_vals, (k, d))
+
     for i in range(iterations):
-        # Store previous centroids to check for convergence
         C_old = C.copy()
 
-        # Assignment step: assign each point to nearest centroid
-        # Calculate distances from each point to each centroid
-        # Shape: (n, k) - distance from each point to each centroid
         distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
 
-        # Get index of closest centroid for each point
         clss = np.argmin(distances, axis=1)
 
-        # Update step: recalculate centroids
         for j in range(k):
-            # Get all points assigned to cluster j
             cluster_points = X[clss == j]
 
-            if cluster_points.shape[0] == 0:
-                # Cluster is empty, reinitialize its centroid
-                C[j] = np.random.uniform(low=min_vals, high=max_vals, size=(d,))
+            if len(cluster_points) == 0:
+                C[j] = np.random.uniform(min_vals, max_vals, (d,))
             else:
-                # Update centroid as mean of assigned points
                 C[j] = np.mean(cluster_points, axis=0)
 
-        # Check for convergence (no change in centroids)
         if np.allclose(C, C_old):
             break
 
-    # Final assignment with updated centroids
     distances = np.linalg.norm(X[:, np.newaxis] - C, axis=2)
     clss = np.argmin(distances, axis=1)
 

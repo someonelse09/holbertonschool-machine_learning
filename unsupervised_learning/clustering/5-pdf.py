@@ -25,56 +25,36 @@ def pdf(X, m, S):
          containing the PDF values for each data point
         All values in P should have a minimum value of 1e-300
     """
-    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
+    if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None
-
-    if not isinstance(m, np.ndarray) or len(m.shape) != 1:
+    if not isinstance(m, np.ndarray) or m.ndim != 1:
         return None
-
-    if not isinstance(S, np.ndarray) or len(S.shape) != 2:
+    if not isinstance(S, np.ndarray) or S.ndim != 2:
         return None
 
     n, d = X.shape
-
-    # Check dimension consistency
     if m.shape[0] != d:
         return None
-
-    if S.shape[0] != d or S.shape[1] != d:
+    if S.shape != (d, d):
         return None
 
-    # Multivariate Gaussian PDF formula:
-    # P(x) = (1 / sqrt((2π)^d * |Σ|)) * exp(-0.5 * (x-μ)^T * Σ^(-1) * (x-μ))
+    try:
+        det_S = np.linalg.det(S)
+        if det_S <= 0:
+            return None
 
-    # Calculate determinant of covariance matrix
-    det_S = np.linalg.det(S)
-
-    # Check if determinant is valid (positive for valid covariance matrix)
-    if det_S <= 0:
+        inv_S = np.linalg.inv(S)
+    except (np.linalg.LinAlgError, ValueError):
         return None
 
-    # Calculate inverse of covariance matrix
-    S_inv = np.linalg.inv(S)
+    diff = X - m
 
-    # Calculate normalization coefficient
-    # coef = 1 / sqrt((2π)^d * |Σ|)
-    coef = 1.0 / np.sqrt(((2 * np.pi) ** d) * det_S)
+    quad = np.sum((diff @ inv_S) * diff, axis=1)
 
-    # Calculate (X - m) for all points
-    # Shape: (n, d)
-    X_centered = X - m
+    norm_const = np.sqrt(((2 * np.pi) ** d) * det_S)
 
-    # Calculate Mahalanobis distance for each point
-    # For each point: (x-μ)^T * Σ^(-1) * (x-μ)
-    # Using matrix multiplication: (X-m) @ S_inv @ (X-m).T
-    # Shape: (n, d) @ (d, d) = (n, d)
-    mahalanobis_part = np.sum(X_centered @ S_inv * X_centered, axis=1)
+    P = np.exp(-0.5 * quad) / norm_const
 
-    # Calculate PDF values
-    # P = coef * exp(-0.5 * mahalanobis_distance)
-    P = coef * np.exp(-0.5 * mahalanobis_part)
-
-    # Ensure minimum value of 1e-300
     P = np.maximum(P, 1e-300)
 
     return P

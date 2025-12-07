@@ -24,58 +24,37 @@ def expectation(X, pi, m, S):
          the posterior probabilities for each data point in each cluster
         l is the total log likelihood
     """
-    if not isinstance(X, np.ndarray) or len(X.shape) != 2:
+    if not isinstance(X, np.ndarray) or X.ndim != 2:
         return None, None
-
-    if not isinstance(pi, np.ndarray) or len(pi.shape) != 1:
+    if not isinstance(pi, np.ndarray) or pi.ndim != 1:
         return None, None
-
-    if not isinstance(m, np.ndarray) or len(m.shape) != 2:
+    if not isinstance(m, np.ndarray) or m.ndim != 2:
         return None, None
-
-    if not isinstance(S, np.ndarray) or len(S.shape) != 3:
+    if not isinstance(S, np.ndarray) or S.ndim != 3:
         return None, None
 
     n, d = X.shape
     k = pi.shape[0]
 
-    if m.shape[0] != k or m.shape[1] != d:
+    if m.shape != (k, d):
+        return None, None
+    if S.shape != (k, d, d):
         return None, None
 
-    if S.shape[0] != k or S.shape[1] != d or S.shape[2] != d:
-        return None, None
+    g = np.zeros((k, n))
 
-    # Check that priors sum to 1
-    if not np.isclose(np.sum(pi), 1):
-        return None, None
-    # Calculate likelihood for each cluster
-    # Shape: (k, n) - likelihood of each point under each cluster's Gaussian
-    likelihoods = np.zeros((k, n))
-
-    # Looping through each cluster to calculate PDF
     for i in range(k):
-        """Calculating the PDF of all points under cluster i's Gaussian"""
-        pdf_values = pdf(X, m[i], S[i])
-        if pdf_values is None:
+        P = pdf(X, m[i], S[i])
+        if P is None:
             return None, None
-        # Multiply by prior for this cluster
-        # Shape: (n,)
-        likelihoods[i] = pi[i] * pdf_values
+        g[i] = pi[i] * P
 
-    # Calculate marginal probability (total likelihood for each point)
-    # Sum across all clusters for each point
-    # Shape: (n,)
-    marginal = np.sum(likelihoods, axis=0)
-    if np.any(marginal == 0):
+    total_p = np.sum(g, axis=0)
+    if np.any(total_p == 0):
         return None, None
 
-    # Calculate posterior probabilities (responsibilities)
-    # g[i, j] = P(cluster i | data point j)
-    # Using Bayes' theorem: P(cluster|point) = P(point|cluster) * P(cluster) / P(point)
-    # Shape: (k, n)
-    g = likelihoods / marginal
-    # Calculate total log likelihood
-    # Sum of log of marginal probabilities
-    l = np.sum(np.log(marginal))
+    g /= total_p
 
-    return g, l
+    log_likelihood = np.sum(np.log(total_p))
+
+    return g, log_likelihood
