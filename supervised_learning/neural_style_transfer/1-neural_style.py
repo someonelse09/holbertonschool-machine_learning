@@ -44,11 +44,11 @@ class NST:
             model - the Keras model used to calculate cost
         """
         if (not isinstance(style_image, np.ndarray) or
-           style_image.ndim != 3) or (style_image.shape[2] != 3):
+            style_image.ndim != 3) or (style_image.shape[2] != 3):
             raise TypeError(
                 "style_image must be a numpy.ndarray with shape (h, w, 3)")
         if (not isinstance(content_image, np.ndarray) or
-           content_image.ndim != 3 or content_image.shape[2] != 3):
+                content_image.ndim != 3 or content_image.shape[2] != 3):
             raise TypeError(
                 "content_image must be a numpy.ndarray with shape (h, w, 3)")
         if not isinstance(alpha, (int, float)) or alpha < 0:
@@ -81,7 +81,7 @@ class NST:
             the scaled image
         """
         if (not isinstance(image, np.ndarray) or
-           image.ndim != 3 or image.shape[2] != 3):
+                image.ndim != 3 or image.shape[2] != 3):
             raise TypeError(
                 "image must be a numpy.ndarray with shape (h, w, 3)")
         h, w, _ = image.shape
@@ -140,4 +140,5 @@ class NST:
         # Create Model
         model = tf.keras.Model(inputs=vgg.input, outputs=model_outputs)
 
+        # Crucial: Return the model so it can be assigned in __init__
         return model
