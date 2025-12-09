@@ -108,24 +108,16 @@ class NST:
 
     def load_model(self):
         """
-        Args:
-            creates the model used to calculate cost
-            the model should use the VGG19 Keras model as a base
-            the model’s input should be the same as the VGG19 input
-            the model’s output should be a list containing the outputs of
-             the VGG19 layers listed in style_layers followed by content _layer
-        saves the model in the instance attribute model
+        Creates the model used to calculate cost
         """
-        # Load VGG19 with pretrained ImageNet weights, excluding top layers
-        vgg = tf.keras.applications.VGG19(
-            include_top=False,
-            weights='imagenet'
-        )
-        vgg.trainable=False
-        # Replace MaxPooling with AveragePooling properly
+        vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
+        vgg.trainable = False
+
+        # Rebuild VGG with AveragePooling instead of MaxPooling
         x = vgg.input
         for layer in vgg.layers[1:]:
             if isinstance(layer, tf.keras.layers.MaxPooling2D):
+                # Replace MaxPooling with AveragePooling (same params)
                 x = tf.keras.layers.AveragePooling2D(
                     pool_size=layer.pool_size,
                     strides=layer.strides,
@@ -133,11 +125,16 @@ class NST:
                 )(x)
             else:
                 x = layer(x)
+
+        # Build the modified model
         new_vgg = tf.keras.Model(inputs=vgg.input, outputs=x)
 
+        # Extract outputs for required layers
         outputs = []
         for name in self.style_layers + [self.content_layer]:
             outputs.append(new_vgg.get_layer(name).output)
+
+        # Final model
         model = tf.keras.Model(inputs=new_vgg.input, outputs=outputs)
 
         return model
