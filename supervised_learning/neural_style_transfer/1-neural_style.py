@@ -9,7 +9,8 @@ import tensorflow as tf
 class NST:
     """
     Public class attributes:
-        style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1', 'block4_conv1', 'block5_conv1']
+        style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1',
+                        'block4_conv1', 'block5_conv1']
         content_layer = 'block5_conv2'
     """
     style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1',
@@ -44,10 +45,12 @@ class NST:
         """
         if (not isinstance(style_image, np.ndarray) or
            style_image.ndim != 3) or (style_image.shape[2] != 3):
-            raise TypeError("style_image must be a numpy.ndarray with shape (h, w, 3)")
+            raise TypeError(
+                "style_image must be a numpy.ndarray with shape (h, w, 3)")
         if (not isinstance(content_image, np.ndarray) or
            content_image.ndim != 3 or content_image.shape[2] != 3):
-            raise TypeError("content_image must be a numpy.ndarray with shape (h, w, 3)")
+            raise TypeError(
+                "content_image must be a numpy.ndarray with shape (h, w, 3)")
         if not isinstance(alpha, (int, float)) or alpha < 0:
             raise TypeError("alpha must be a non-negative number")
         if not isinstance(beta, (int, float)) or beta < 0:
@@ -79,7 +82,8 @@ class NST:
         """
         if (not isinstance(image, np.ndarray) or
            image.ndim != 3 or image.shape[2] != 3):
-            raise TypeError("image must be a numpy.ndarray with shape (h, w, 3)")
+            raise TypeError(
+                "image must be a numpy.ndarray with shape (h, w, 3)")
         h, w, _ = image.shape
         # Calculate new dimensions
         if h > w:
@@ -109,14 +113,31 @@ class NST:
     def load_model(self):
         """
         Creates the model used to calculate cost
+        Returns:
+            the Keras model
         """
-        vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
+        # Load VGG19 with pretrained ImageNet weights, excluding top layers
+        vgg = tf.keras.applications.VGG19(
+            include_top=False,
+            weights='imagenet'
+        )
+        # Freeze the VGG19 model
         vgg.trainable = False
 
-        outputs = []
+        # Replace MaxPooling layers with AveragePooling layers
         for layer in vgg.layers:
-            if layer.name in self.style_layers or layer.name == self.content_layer:
-                outputs.append(layer.output)
+            if isinstance(layer, tf.keras.layers.MaxPooling2D):
+                layer.__class__ = tf.keras.layers.AveragePooling2D
 
-        model = tf.keras.Model(inputs=vgg.input, outputs=outputs)
+        # Get the outputs for style layers and content layer explicitly
+        style_outputs = [vgg.get_layer(name).output
+                         for name in self.style_layers]
+        content_output = vgg.get_layer(self.content_layer).output
+
+        # Combine outputs: style layers first, then content layer
+        model_outputs = style_outputs + [content_output]
+
+        # Create Model
+        model = tf.keras.Model(inputs=vgg.input, outputs=model_outputs)
+
         return model
