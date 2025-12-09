@@ -60,7 +60,7 @@ class NST:
         self.content_image = self.scale_image(content_image)
         self.alpha = alpha
         self.beta = beta
-        self.model = self.load_model()
+        self.load_model()
 
     @staticmethod
     def scale_image(image):
@@ -116,29 +116,26 @@ class NST:
         Returns:
             the Keras model
         """
-        # Load VGG19 with pretrained ImageNet weights, excluding top layers
-        vgg = tf.keras.applications.VGG19(
-            include_top=False,
-            weights='imagenet'
-        )
-        # Freeze the VGG19 model
-        vgg.trainable = False
+        VGG19_model = tf.keras.applications.VGG19(include_top=False,
+                                                  weights='imagenet')
+        VGG19_model.save("VGG19_base_model")
+        custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
 
-        # Replace MaxPooling layers with AveragePooling layers
+        vgg = tf.keras.models.load_model("VGG19_base_model",
+                                         custom_objects=custom_objects)
+
+        style_outputs = []
+        content_output = None
+
         for layer in vgg.layers:
-            if isinstance(layer, tf.keras.layers.MaxPooling2D):
-                layer.__class__ = tf.keras.layers.AveragePooling2D
+            if layer.name in self.style_layers:
+                style_outputs.append(layer.output)
+            if layer.name in self.content_layer:
+                content_output = layer.output
 
-        # Get the outputs for style layers and content layer explicitly
-        style_outputs = [vgg.get_layer(name).output
-                         for name in self.style_layers]
-        content_output = vgg.get_layer(self.content_layer).output
+            layer.trainable = False
 
-        # Combine outputs: style layers first, then content layer
-        model_outputs = style_outputs + [content_output]
+        outputs = style_outputs + [content_output]
 
-        # Create Model
-        model = tf.keras.Model(inputs=vgg.input, outputs=model_outputs)
-
-        # Crucial: Return the model so it can be assigned in __init__
-        return model
+        model = tf.keras.models.Model(vgg.input, outputs)
+        self.model = model
