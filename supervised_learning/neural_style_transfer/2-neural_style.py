@@ -9,7 +9,8 @@ import tensorflow as tf
 class NST:
     """
     Public class attributes:
-        style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1', 'block4_conv1', 'block5_conv1']
+        style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1',
+                        'block4_conv1', 'block5_conv1']
         content_layer = 'block5_conv2'
     """
     style_layers = ['block1_conv1', 'block2_conv1', 'block3_conv1',
@@ -43,13 +44,15 @@ class NST:
             model - the Keras model used to calculate cost
         """
         if (not isinstance(style_image, np.ndarray) or
-           style_image.ndim != 3) or (style_image.shape[2] != 3):
-            raise TypeError("style_image must be a numpy.ndarray with shape (h, w, 3)")
+            style_image.ndim != 3) or (style_image.shape[2] != 3):
+            raise TypeError(
+                "style_image must be a numpy.ndarray with shape (h, w, 3)")
         if (not isinstance(content_image, np.ndarray) or
-           content_image.ndim != 3 or content_image.shape[2] != 3):
-            raise TypeError("content_image must be a numpy.ndarray with shape (h, w, 3)")
+                content_image.ndim != 3 or content_image.shape[2] != 3):
+            raise TypeError(
+                "content_image must be a numpy.ndarray with shape (h, w, 3)")
         if not isinstance(alpha, (int, float)) or alpha < 0:
-            raise ValueError("alpha must be a non-negative number")
+            raise TypeError("alpha must be a non-negative number")
         if not isinstance(beta, (int, float)) or beta < 0:
             raise TypeError("beta must be a non-negative number")
 
@@ -57,7 +60,7 @@ class NST:
         self.content_image = self.scale_image(content_image)
         self.alpha = alpha
         self.beta = beta
-        self.model = self.load_model()
+        self.load_model()
 
     @staticmethod
     def scale_image(image):
@@ -78,8 +81,9 @@ class NST:
             the scaled image
         """
         if (not isinstance(image, np.ndarray) or
-           image.ndim != 3 or image.shape[2] != 3):
-            raise TypeError("image must be a numpy.ndarray with shape (h, w, 3)")
+                image.ndim != 3 or image.shape[2] != 3):
+            raise TypeError(
+                "image must be a numpy.ndarray with shape (h, w, 3)")
         h, w, _ = image.shape
         # Calculate new dimensions
         if h > w:
@@ -108,39 +112,33 @@ class NST:
 
     def load_model(self):
         """
-        Args:
-            creates the model used to calculate cost
-            the model should use the VGG19 Keras model as a base
-            the model’s input should be the same as the VGG19 input
-            the model’s output should be a list containing the outputs of
-             the VGG19 layers listed in style_layers followed by content _layer
-        saves the model in the instance attribute model
+        Creates the model used to calculate cost
+        Returns:
+            the Keras model
         """
-        # Load VGG19 with pretrained ImageNet weights, excluding top layers
-        vgg = tf.keras.applications.VGG19(
-            include_top=False,
-            weights='imagenet'
-        )
-        # Freeze the VGG19 model
-        vgg.trainable = False
+        VGG19_model = tf.keras.applications.VGG19(include_top=False,
+                                                  weights='imagenet')
+        VGG19_model.save("VGG19_base_model")
+        custom_objects = {'MaxPooling2D': tf.keras.layers.AveragePooling2D}
 
-        # Replace MaxPooling layers with AveragePooling layers
+        vgg = tf.keras.models.load_model("VGG19_base_model",
+                                         custom_objects=custom_objects)
+
+        style_outputs = []
+        content_output = None
+
         for layer in vgg.layers:
-            if isinstance(layer, tf.keras.layers.MaxPooling2D):
-                layer.__class__ = tf.keras.layers.AveragePooling2D
+            if layer.name in self.style_layers:
+                style_outputs.append(layer.output)
+            if layer.name in self.content_layer:
+                content_output = layer.output
 
-        # Get the outputs for style layers and content layer
-        style_outputs = [vgg.get_layer(name).output
-                         for name in self.style_layers]
-        content_outputs = vgg.get_layer(self.content_layer).output
+            layer.trainable = False
 
-        # Combine outputs: style layers first, then content layer
-        model_outputs = style_outputs + [content_outputs]
+        outputs = style_outputs + [content_output]
 
-        # Create Model
-        model = tf.keras.Model(inputs=vgg.input, outputs=model_outputs)
-
-        return model
+        model = tf.keras.models.Model(vgg.input, outputs)
+        self.model = model
 
     @staticmethod
     def gram_matrix(input_layer):
