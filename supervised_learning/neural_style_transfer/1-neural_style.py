@@ -113,28 +113,10 @@ class NST:
         vgg = tf.keras.applications.VGG19(include_top=False, weights='imagenet')
         vgg.trainable = False
 
-        # Rebuild VGG with AveragePooling instead of MaxPooling
-        x = vgg.input
-        for layer in vgg.layers[1:]:
-            if isinstance(layer, tf.keras.layers.MaxPooling2D):
-                # Replace MaxPooling with AveragePooling (same params)
-                x = tf.keras.layers.AveragePooling2D(
-                    pool_size=layer.pool_size,
-                    strides=layer.strides,
-                    padding=layer.padding
-                )(x)
-            else:
-                x = layer(x)
-
-        # Build the modified model
-        new_vgg = tf.keras.Model(inputs=vgg.input, outputs=x)
-
-        # Extract outputs for required layers
         outputs = []
-        for name in self.style_layers + [self.content_layer]:
-            outputs.append(new_vgg.get_layer(name).output)
+        for layer in vgg.layers:
+            if layer.name in self.style_layers or layer.name == self.content_layer:
+                outputs.append(layer.output)
 
-        # Final model
-        model = tf.keras.Model(inputs=new_vgg.input, outputs=outputs)
-
+        model = tf.keras.Model(inputs=vgg.input, outputs=outputs)
         return model
