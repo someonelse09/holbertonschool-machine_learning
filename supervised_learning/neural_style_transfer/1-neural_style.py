@@ -49,7 +49,7 @@ class NST:
            content_image.ndim != 3 or content_image.shape[2] != 3):
             raise TypeError("content_image must be a numpy.ndarray with shape (h, w, 3)")
         if not isinstance(alpha, (int, float)) or alpha < 0:
-            raise ValueError("alpha must be a non-negative number")
+            raise TypeError("alpha must be a non-negative number")
         if not isinstance(beta, (int, float)) or beta < 0:
             raise TypeError("beta must be a non-negative number")
 
@@ -121,23 +121,23 @@ class NST:
             include_top=False,
             weights='imagenet'
         )
-        # Freeze the VGG19 model
-        vgg.trainable = False
-
-        # Replace MaxPooling layers with AveragePooling layers
-        for layer in vgg.layers:
+        vgg.trainable=False
+        # Replace MaxPooling with AveragePooling properly
+        x = vgg.input
+        for layer in vgg.layers[1:]:
             if isinstance(layer, tf.keras.layers.MaxPooling2D):
-                layer.__class__ = tf.keras.layers.AveragePooling2D
+                x = tf.keras.layers.AveragePooling2D(
+                    pool_size=layer.pool_size,
+                    strides=layer.strides,
+                    padding=layer.padding
+                )(x)
+            else:
+                x = layer(x)
+        new_vgg = tf.keras.Model(inputs=vgg.input, outputs=x)
 
-        # Get the outputs for style layers and content layer
-        style_outputs = [vgg.get_layer(name).output
-                         for name in self.style_layers]
-        content_outputs = vgg.get_layer(self.content_layer).output
-
-        # Combine outputs: style layers first, then content layer
-        model_outputs = style_outputs + [content_outputs]
-
-        # Create Model
-        model = tf.keras.Model(inputs=vgg.input, outputs=model_outputs)
+        outputs = []
+        for name in self.style_layers + [self.content_layer]:
+            outputs.append(new_vgg.get_layer(name).output)
+        model = tf.keras.Model(inputs=new_vgg.input, outputs=outputs)
 
         return model
