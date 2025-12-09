@@ -334,6 +334,7 @@ class NST:
            or generated_image.shape != s):
             raise TypeError(f"generated_image must be a tensor of shape {s}")
         with tf.GradientTape() as tape:
+            tape.watch(generated_image)
             # Calculating total cost and individual costs
             j_total, j_content, j_style = self.total_cost(generated_image)
         # Compute gradients of total cost with respect to generated_image
