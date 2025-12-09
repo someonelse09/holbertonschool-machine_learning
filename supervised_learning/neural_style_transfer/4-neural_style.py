@@ -219,8 +219,8 @@ class NST:
             raise TypeError("style_output must be a tensor of rank 4")
         # Get number of channels from style_output
         c = int(style_output.shape[-1])
-        if (not isinstance(gram_target, (tf.Tensor, tf.Variable)
-                           or gram_target.shape != (1, c, c))):
+        if (not isinstance(gram_target, (tf.Tensor, tf.Variable))
+           or gram_target.shape != (1, c, c)):
             raise TypeError(f"gram_target must be a tensor of shape [1, {c}, {c}]")
 
         # Calculate gram matrix of the generated image's style output
