@@ -30,7 +30,8 @@ class BayesianOptimization:
              to the output of the black-box function
             xsi is the exploration-exploitation factor for acquisition
             minimize is a bool determining whether optimization
-             should be performed for minimization (True) or maximization (False)
+             should be performed for minimization
+             (True) or maximization (False)
         Sets the following public instance attributes:
             f: the black-box function
             gp: an instance of the class GaussianProcess
@@ -74,8 +75,9 @@ class BayesianOptimization:
             z[non_zero] = improvement_with_xsi[non_zero] / sigma[non_zero]
             # EI formula: EI = improvement * CDF(Z) + sigma * PDF(Z)
             EI = np.zeros_like(sigma)
-            EI[non_zero] = (improvement_with_xsi[non_zero] * norm.cdf(z[non_zero])) +\
-                           sigma[non_zero] * norm.pdf(z[non_zero])
+            EI[non_zero] = (improvement_with_xsi[non_zero] *
+                            norm.cdf(z[non_zero])) +\
+                            sigma[non_zero] * norm.pdf(z[non_zero])
             EI[~non_zero] = np.maximum(improvement_with_xsi[~non_zero], 0)
         # Find the point with maximum EI
         X_next = self.X_s[np.argmax(EI)]
@@ -116,4 +118,3 @@ class BayesianOptimization:
         Y_opt = self.gp.Y[idx_opt]
 
         return X_opt, Y_opt
-
