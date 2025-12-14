@@ -44,7 +44,7 @@ class GaussianProcess:
         # Calculate squared Euclidean distance using broadcasting
         # ||x1 - x2||^2 = ||x1||^2 + ||x2||^2 - 2*x1*x2
         sqdist = np.sum(X1 ** 2, 1).reshape(-1, 1) +\
-                np.sum(X2 ** 2, 1) - 2 * np.dot(X1, X2.T)
+                 np.sum(X2 ** 2, 1) - 2 * np.dot(X1, X2.T)
 
         # RBF kernel: K(x1, x2) = sigma_f^2 * exp(-0.5 * ||x1 - x2||^2 / l^2)
         return self.sigma_f ** 2 * np.exp(-0.5 * sqdist / self.l ** 2)
