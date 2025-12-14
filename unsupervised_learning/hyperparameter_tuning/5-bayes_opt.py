@@ -76,8 +76,8 @@ class BayesianOptimization:
             # EI formula: EI = improvement * CDF(Z) + sigma * PDF(Z)
             EI = np.zeros_like(sigma)
             EI[non_zero] = \
-            (improvement_with_xsi[non_zero] * norm.cdf(z[non_zero])) +\
-            sigma[non_zero] * norm.pdf(z[non_zero])
+                           (improvement_with_xsi[non_zero] * norm.cdf(z[non_zero])) +\
+                           sigma[non_zero] * norm.pdf(z[non_zero])
             EI[~non_zero] = np.maximum(improvement_with_xsi[~non_zero], 0)
         # Find the point with maximum EI
         X_next = self.X_s[np.argmax(EI)]
