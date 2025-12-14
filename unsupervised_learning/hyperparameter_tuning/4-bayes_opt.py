@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+#!/usr/bin/env python3
 """This module contains the class that performs
 Bayesian optimization on a noiseless 1D Gaussian process"""
 
