@@ -44,13 +44,14 @@ class GaussianProcess:
         # Calculate squared Euclidean distance using broadcasting
         # ||x1 - x2||^2 = ||x1||^2 + ||x2||^2 - 2*x1*x2
         sqdist = np.sum(X1 ** 2, 1).reshape(-1, 1) +\
-        np.sum(X2 ** 2, 1) - 2 * np.dot(X1, X2.T)
+                np.sum(X2 ** 2, 1) - 2 * np.dot(X1, X2.T)
 
         # RBF kernel: K(x1, x2) = sigma_f^2 * exp(-0.5 * ||x1 - x2||^2 / l^2)
         return self.sigma_f ** 2 * np.exp(-0.5 * sqdist / self.l ** 2)
 
     def predict(self, X_s):
-        """Predicts the mean and standard deviation of points in a Gaussian process
+        """Predicts the mean and standard deviation
+        of points in a Gaussian process
         Args:
             X_s is a numpy.ndarray of shape (s, 1) containing all of the
              points whose mean and standard deviation should be calculated
