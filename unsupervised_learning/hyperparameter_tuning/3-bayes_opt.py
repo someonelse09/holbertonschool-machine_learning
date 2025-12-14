@@ -29,7 +29,8 @@ class BayesianOptimization:
              to the output of the black-box function
             xsi is the exploration-exploitation factor for acquisition
             minimize is a bool determining whether optimization
-             should be performed for minimization (True) or maximization (False)
+             should be performed for minimization
+             (True) or maximization (False)
         Sets the following public instance attributes:
             f: the black-box function
             gp: an instance of the class GaussianProcess
