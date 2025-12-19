@@ -34,10 +34,10 @@ def autoencoder(input_dims, hidden_layers, latent_dims, lambtha):
         encoded = keras.layers.Dense(nodes, activation='relu')(encoded)
 
     # Latent Space (Bottleneck)
-    # We add 'activity_regularizer' to apply L1 regularization to the OUTPUT of this layer.
-    # This penalizes the model for having too many active neurons, forcing sparsity.
-    latent = keras.layers.Dense(latent_dims, activation='relu',
-                                activity_regularizer=keras.regularizers.l1(lambtha))(encoded)
+    latent = keras.layers.Dense(latent_dims,
+                                activation='relu',
+                                activity_regularizer=
+                                keras.regularizers.l1(lambtha))(encoded)
 
     encoder = keras.Model(inputs, latent)
 
