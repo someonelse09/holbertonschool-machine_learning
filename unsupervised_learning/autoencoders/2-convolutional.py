@@ -53,8 +53,6 @@ def autoencoder(input_dims, filters, latent_dims):
 
     decoded = decoder_inputs
     reversed_filters = filters[::-1]
-
-    # Let's handle the main loop (all except the last filter in the reversed list)
     for i in range(len(reversed_filters) - 1):
         # "filter size of (3, 3) with same padding and relu activation"
         decoded = keras.layers.Conv2D(filters=reversed_filters[i],
@@ -63,7 +61,6 @@ def autoencoder(input_dims, filters, latent_dims):
                                       activation='relu')(decoded)
         # "followed by upsampling of size (2, 2)"
         decoded = keras.layers.UpSampling2D(size=(2, 2))(decoded)
-
 
     decoded = keras.layers.Conv2D(filters=reversed_filters[-1],
                                   kernel_size=(3, 3),
