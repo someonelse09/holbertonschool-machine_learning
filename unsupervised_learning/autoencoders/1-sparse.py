@@ -33,11 +33,11 @@ def autoencoder(input_dims, hidden_layers, latent_dims, lambtha):
     for nodes in hidden_layers:
         encoded = keras.layers.Dense(nodes, activation='relu')(encoded)
 
+    ar = keras.regularizers.l1(lambtha)
     # Latent Space (Bottleneck)
     latent = keras.layers.Dense(latent_dims,
                                 activation='relu',
-                                activity_regularizer=
-                                keras.regularizers.l1(lambtha))(encoded)
+                                activity_regularizer=ar)(encoded)
 
     encoder = keras.Model(inputs, latent)
 
