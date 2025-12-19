@@ -38,38 +38,44 @@ def autoencoder(input_dims, filters, latent_dims):
     encoded = inputs
     for f in filters:
         # "kernel size of (3, 3) with same padding and relu activation"
-        encoded = keras.layers.Conv2D(filters=f, kernel_size=(3, 3),
-                                      padding='same', activation='relu')(encoded)
+        encoded = keras.layers.Conv2D(filters=f,
+                                      kernel_size=(3, 3),
+                                      padding='same',
+                                      activation='relu')(encoded)
         # "followed by max pooling of size (2, 2)"
-        encoded = keras.layers.MaxPooling2D(pool_size=(2, 2), padding='same')(encoded)
-
+        encoded = keras.layers.MaxPooling2D(pool_size=(2, 2),
+                                            padding='same')(encoded)
 
     encoder = keras.Model(inputs, encoded)
 
     # --- Build Decoder ---
     decoder_inputs = keras.Input(shape=latent_dims)
 
-
     decoded = decoder_inputs
     reversed_filters = filters[::-1]
-
 
     # Let's handle the main loop (all except the last filter in the reversed list)
     for i in range(len(reversed_filters) - 1):
         # "filter size of (3, 3) with same padding and relu activation"
-        decoded = keras.layers.Conv2D(filters=reversed_filters[i], kernel_size=(3, 3),
-                                      padding='same', activation='relu')(decoded)
+        decoded = keras.layers.Conv2D(filters=reversed_filters[i],
+                                      kernel_size=(3, 3),
+                                      padding='same',
+                                      activation='relu')(decoded)
         # "followed by upsampling of size (2, 2)"
         decoded = keras.layers.UpSampling2D(size=(2, 2))(decoded)
 
 
-    decoded = keras.layers.Conv2D(filters=reversed_filters[-1], kernel_size=(3, 3),
-                                  padding='valid', activation='relu')(decoded)
+    decoded = keras.layers.Conv2D(filters=reversed_filters[-1],
+                                  kernel_size=(3, 3),
+                                  padding='valid',
+                                  activation='relu')(decoded)
     decoded = keras.layers.UpSampling2D(size=(2, 2))(decoded)
 
     # --- Last Convolution (Output Layer) ---
-    decoded = keras.layers.Conv2D(filters=input_dims[-1], kernel_size=(3, 3),
-                                  padding='same', activation='sigmoid')(decoded)
+    decoded = keras.layers.Conv2D(filters=input_dims[-1],
+                                  kernel_size=(3, 3),
+                                  padding='same',
+                                  activation='sigmoid')(decoded)
 
     decoder = keras.Model(decoder_inputs, decoded)
 
