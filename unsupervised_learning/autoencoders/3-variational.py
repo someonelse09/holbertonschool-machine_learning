@@ -84,13 +84,13 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
 
     # KL Divergence loss
     kl_loss = -0.5 * keras.backend.sum(
-        1 + z_log_sigma_out - keras.backend.square(z_mean_out) -\
+        1 + z_log_sigma_out - keras.backend.square(z_mean_out) -
         keras.backend.exp(z_log_sigma_out),
         axis=-1
     )
 
     # Total VAE loss
-    vae_loss = keras.backend.mean(reconstruction_loss + kl_loss)
+    vae_loss = keras.backend.mean(reconstruct_loss + kl_loss)
 
     # Add loss to the model
     auto.add_loss(vae_loss)
@@ -99,3 +99,4 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     auto.compile(optimizer='adam')
 
     return encoder, decoder, auto
+    
