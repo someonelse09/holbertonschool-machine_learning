@@ -49,7 +49,8 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
         return z_m + keras.backend.exp(z_ls / 2) * epsilon
 
     # Sample z from latent distribution
-    z = keras.layers.Lambda(sampling, output_shape=(latent_dims,))([z_mean, z_log_sigma])
+    z = keras.layers.Lambda(sampling,
+                            output_shape=(latent_dims,))([z_mean, z_log_sigma])
 
     # Encoder outputs: z (sampled), mean, and log_variance
     encoder = keras.Model(inputs, [z, z_mean, z_log_sigma], name='encoder')
@@ -78,12 +79,13 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
 
     # --- Custom VAE Loss ---
     # Reconstruction loss (binary crossentropy)
-    reconstruction_loss = keras.losses.binary_crossentropy(inputs, reconstructed)
-    reconstruction_loss *= input_dims
+    reconstruct_loss = keras.losses.binary_crossentropy(inputs, reconstructed)
+    reconstruct_loss *= input_dims
 
     # KL Divergence loss
     kl_loss = -0.5 * keras.backend.sum(
-        1 + z_log_sigma_out - keras.backend.square(z_mean_out) - keras.backend.exp(z_log_sigma_out),
+        1 + z_log_sigma_out - keras.backend.square(z_mean_out) -\
+        keras.backend.exp(z_log_sigma_out),
         axis=-1
     )
 
