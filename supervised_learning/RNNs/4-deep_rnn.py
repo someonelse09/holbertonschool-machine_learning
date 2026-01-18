@@ -26,13 +26,13 @@ def deep_rnn(rnn_cells, X, h_0):
         Y: a numpy.ndarray containing all the outputs
     """
     t, m, i = X.shape
-    l = len(rnn_cells)
+    length = len(rnn_cells)
     h = h_0.shape[2]
 
     # Initialize H to store all hidden
     # states for all layers across all time steps
     # Shape: (t+1, l, m, h) - includes initial states
-    H = np.zeros((t + 1, l, m, h))
+    H = np.zeros((t + 1, length, m, h))
 
     H[0] = h_0
 
@@ -48,7 +48,7 @@ def deep_rnn(rnn_cells, X, h_0):
         layer_input = X[step]
 
         # Process through each layer
-        for layer in range(l):
+        for layer in range(length):
             # Get previous hidden state for this layer
             h_prev = H[step, layer]
 
