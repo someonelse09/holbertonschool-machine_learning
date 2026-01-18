@@ -18,7 +18,7 @@ class RNNCell:
             Wy and by are for the output
             The weights should be initialized using a random
             normal distribution in the order listed above
-            The weights will be used on the right side for matrix multiplication
+            The weights will be used on right side for matrix multiplication
             The biases should be initialized as zeros"""
         # Wh: weight matrix for concatenated [h_prev, x_t] -> h_next
         # Shape: (i + h, h) because we concat input(i)
