@@ -20,7 +20,7 @@ class GRUCell:
             Wy and by are for the output
             The weights should be initialized using a
              random normal distribution in the order listed above
-            The weights will be used on the right side for matrix multiplication
+            The weights will be used on right side for matrix multiplication
             The biases should be initialized as zeros
         """
         self.Wz = np.random.randn(i + h, h)
@@ -49,7 +49,7 @@ class GRUCell:
         # Concatenate h_prev and x_t: shape (m, h) + (m, i) -> (m, h+i)
         concat = np.concatenate((h_prev, x_t), axis=1)
 
-        # Reset gate: determines how much of the previous hidden state to forget
+        # Reset gate: determines how much of previous hidden state to forget
         # sigmoid(concat @ Wr + br): (m, h+i) @ (h+i, h) -> (m, h)
         r = 1 / (1 + np.exp(-(concat @ self.Wr + self.br)))
 
@@ -57,7 +57,8 @@ class GRUCell:
         # sigmoid(concat @ Wz + bz): (m, h+i) @ (h+i, h) -> (m, h)
         z = 1 / (1 + np.exp(-(concat @ self.Wz + self.bz)))
 
-        # Candidate hidden state with reset gate applied element-wise to h_prev
+        # Candidate hidden state with reset
+        # gate applied element-wise to h_prev
         # Concatenate (r * h_prev) and x_t: (m, h) + (m, i) -> (m, h+i)
         concat_reset = np.concatenate((r * h_prev, x_t), axis=1)
 
