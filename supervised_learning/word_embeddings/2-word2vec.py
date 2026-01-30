@@ -24,11 +24,6 @@ def word2vec_model(sentences, vector_size=100, min_count=5,
     Returns:
         the trained model
     """
-    # Determine the training algorithm
-    # sg=0 for CBOW (Continuous Bag of Words)
-    # sg=1 for Skip-gram
-    sg = 0 if cbow else 1
-
     # Creating the word to vector model
     model = gensim.models.Word2Vec(
         sentences=sentences,
@@ -36,15 +31,15 @@ def word2vec_model(sentences, vector_size=100, min_count=5,
         min_count=min_count,
         window=window,
         negative=negative,
-        sg=sg,
         epochs=epochs,
         seed=seed,
-        workers=workers
+        workers=workers,
+        sg=(not cbow)
     )
+
     model.train(
         sentences,
         total_examples=model.corpus_count,
-        epochs=model.epochs
-    )
+        epochs=epochs)
 
     return model
