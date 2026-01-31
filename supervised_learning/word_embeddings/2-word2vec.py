@@ -24,22 +24,22 @@ def word2vec_model(sentences, vector_size=100, min_count=5,
     Returns:
         the trained model
     """
+    sg = 0 if cbow else 1
     # Creating the word to vector model
     model = gensim.models.Word2Vec(
-        sentences=sentences,
         vector_size=vector_size,
-        min_count=min_count,
         window=window,
+        min_count=min_count,
         negative=negative,
-        epochs=epochs,
+        sg=sg,
         seed=seed,
-        workers=workers,
-        sg=(not cbow)
+        workers=workers
     )
-
+    model.build_vocab(sentences)
     model.train(
-        sentences,
-        total_examples=model.corpus_count,
-        epochs=epochs)
+                sentences,
+                total_examples=model.corpus_count,
+                epochs=epochs
+    )
 
     return model
