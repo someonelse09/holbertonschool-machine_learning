@@ -10,7 +10,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 
     def __init__(self, dm, h):
         """
-        Initialize Multi Head Attention
+        Initialize Multi Head Attention.
 
         Args:
             dm: integer representing the dimensionality of the model
@@ -32,8 +32,8 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 
     def split_heads(self, x, batch_size):
         """
-        Split the last dimension into (h, depth)
-        Transpose the result to shape (batch, h, seq_len, depth)
+        Split the last dimension into (h, depth).
+        Transpose the result to shape (batch, h, seq_len, depth).
 
         Args:
             x: tensor of shape (batch, seq_len, dm)
@@ -42,7 +42,8 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         Returns:
             Tensor of shape (batch, h, seq_len, depth)
         """
-        # Reshape from (batch, seq_len, dm) to (batch, seq_len, h, depth)
+        # Reshape from (batch, seq_len, dm) to
+        # (batch, seq_len, h, depth)
         x = tf.reshape(x, (batch_size, -1, self.h, self.depth))
 
         # Transpose to (batch, h, seq_len, depth)
@@ -50,22 +51,23 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 
     def call(self, Q, K, V, mask):
         """
-        Forward pass through multi-head attention
+        Forward pass through multi-head attention.
 
         Args:
-            Q: tensor of shape (batch, seq_len_q, dk) containing input to
-               generate the query matrix
-            K: tensor of shape (batch, seq_len_v, dk) containing input to
-               generate the key matrix
-            V: tensor of shape (batch, seq_len_v, dv) containing input to
-               generate the value matrix
+            Q: tensor of shape (batch, seq_len_q, dk) containing
+               input to generate the query matrix
+            K: tensor of shape (batch, seq_len_v, dk) containing
+               input to generate the key matrix
+            V: tensor of shape (batch, seq_len_v, dv) containing
+               input to generate the value matrix
             mask: always None
 
         Returns:
-            output: tensor with shape (..., seq_len_q, dm) containing the
-                   scaled dot product attention
-            weights: tensor with shape (..., h, seq_len_q, seq_len_v)
-                    containing the attention weights
+            output: tensor with shape (..., seq_len_q, dm)
+                    containing the scaled dot product attention
+            weights: tensor with shape
+                     (..., h, seq_len_q, seq_len_v) containing
+                     the attention weights
         """
         batch_size = tf.shape(Q)[0]
 
@@ -88,12 +90,19 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         # weights: (batch, h, seq_len_q, seq_len_v)
         scaled_attention, weights = sdp_attention(Q, K, V, mask)
 
-        # Transpose back: (batch, h, seq_len_q, depth) -> (batch, seq_len_q, h, depth)
-        scaled_attention = tf.transpose(scaled_attention, perm=[0, 2, 1, 3])
+        # Transpose back to
+        # (batch, seq_len_q, h, depth)
+        scaled_attention = tf.transpose(
+            scaled_attention,
+            perm=[0, 2, 1, 3]
+        )
 
-        # Concatenate heads: (batch, seq_len_q, h, depth) -> (batch, seq_len_q, dm)
-        concat_attention = tf.reshape(scaled_attention,
-                                      (batch_size, -1, self.dm))
+        # Concatenate heads:
+        # (batch, seq_len_q, h, depth) -> (batch, seq_len_q, dm)
+        concat_attention = tf.reshape(
+            scaled_attention,
+            (batch_size, -1, self.dm)
+        )
 
         # Apply final linear layer
         output = self.linear(concat_attention)
