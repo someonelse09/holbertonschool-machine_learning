@@ -2,7 +2,7 @@
 """This class includes the class Dataset that
 loads and prepares a dataset for machine translation"""
 import tensorflow_datasets as tfds
-from transformers import AutoTokenizer
+import transformers
 import numpy as np
 
 class Dataset:
@@ -48,10 +48,10 @@ class Dataset:
             tokenizer_pt is the Portuguese tokenizer
             tokenizer_en is the English tokenizer
         """
-        tokenizer_pt = AutoTokenizer.from_pretrained(
+        tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
             'neuralmind/bert-base-portuguese-cased'
         )
-        tokenizer_en = AutoTokenizer.from_pretrained(
+        tokenizer_en = transformers.AutoTokenizer.from_pretrained(
             'bert-base-uncased'
         )
         pt_sentences = []
