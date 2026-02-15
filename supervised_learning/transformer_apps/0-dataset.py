@@ -21,11 +21,14 @@ class Dataset:
             tokenizer_en is the English tokenizer created from the training set
         """
         # as_supervised=True returns (input, label) tuples
-        self.data_train, self.data_valid = tfds.load(
+        examples, metadata = tfds.load(
             'ted_hrlr_translate/pt_to_en',
+            with_info=True,
             split=['train', 'validation'],
             as_supervised=True
         )
+        self.data_train = examples[0]
+        self.data_valid = examples[1]
         self.tokenizer_pt, self.tokenizer_en = self.tokenize_dataset(
             self.data_train
         )
