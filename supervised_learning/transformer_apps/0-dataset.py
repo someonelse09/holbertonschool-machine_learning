@@ -49,10 +49,14 @@ class Dataset:
             tokenizer_en is the English tokenizer
         """
         tokenizer_pt = transformers.AutoTokenizer.from_pretrained(
-            'neuralmind/bert-base-portuguese-cased'
+            'neuralmind/bert-base-portuguese-cased',
+            use_fast=True,
+            clean_up_tokenization_spaces=True
         )
         tokenizer_en = transformers.AutoTokenizer.from_pretrained(
-            'bert-base-uncased'
+            'bert-base-uncased',
+            use_fast=True,
+            clean_up_tokenization_spaces=True
         )
         pt_sentences = []
         en_sentences = []
@@ -60,8 +64,8 @@ class Dataset:
         # Extract sentences from the dataset
         # Decode byte strings to UTF-8 text
         for pt, en in data:
-            pt_sentences.append(pt.numpy().decode('utf-8'))
-            en_sentences.append(en.numpy().decode('utf-8'))
+            pt_sentences.append(pt.decode('utf-8'))
+            en_sentences.append(en.decode('utf-8'))
         vocab_size = 2 ** 13
 
         tokenizer_pt = tokenizer_pt.train_new_from_iterator(
@@ -72,5 +76,7 @@ class Dataset:
             en_sentences,
             vocab_size=vocab_size
         )
+        self.tokenizer_pt = tokenizer_pt
+        self.tokenizer_en = tokenizer_en
 
-        return tokenizer_pt, tokenizer_en
+        return self.tokenizer_pt, self.tokenizer_en
