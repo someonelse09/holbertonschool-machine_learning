@@ -19,20 +19,23 @@ def load_frozen_lake(desc=None, map_name=None, is_slippery=False):
     """
     if desc is None and map_name is None:
         environment = gym.make(
-            "FrozenLake-v1",
+            'FrozenLake-v1',
             map_name="8x8",
             is_slippery=is_slippery,
+            render_mode="ansi"
         )
     elif desc is not None:
         environment = gym.make(
-            "FrozenLake-v1",
+            'FrozenLake-v1',
             desc=desc,
-            is_slippery=is_slippery
+            is_slippery=is_slippery,
+            render_mode="ansi"
         )
     else:
         environment = gym.make(
-            "FrozenLake-v1",
-            desc=desc,
-            is_slippery=is_slippery
+            'FrozenLake-v1',
+            map_name=map_name,
+            is_slippery=is_slippery,
+            render_mode="ansi"
         )
     return environment

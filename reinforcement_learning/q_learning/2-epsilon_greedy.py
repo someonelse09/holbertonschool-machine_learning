@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """This module includes the function that
 uses epsilon-greedy to determine the next action"""
-import numpy  as np
+import numpy as np
+
 
 def epsilon_greedy(Q, state, epsilon):
     """
