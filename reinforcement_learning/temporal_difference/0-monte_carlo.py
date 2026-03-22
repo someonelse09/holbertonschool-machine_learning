@@ -48,7 +48,7 @@ def monte_carlo(env, V, policy, episodes=5000,
     return V
 
 
-""" 
+"""
 Episode Generation — For each episode, the environment is reset and
  the policy is followed step-by-step, collecting (state, reward) tuples
   until the episode ends (terminal state or max steps reached).
