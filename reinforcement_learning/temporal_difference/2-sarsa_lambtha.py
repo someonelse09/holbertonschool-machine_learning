@@ -72,7 +72,7 @@ def sarsa_lambtha(env, Q, lambtha, episodes=5000,
 """
 Q-table instead of V — Eligibility traces E are now shape
  (s, a) since we're tracking state-action pairs, not just states.
- 
+
 SARSA is on-policy — The next action next_action is chosen before
  the update using the same epsilon-greedy policy (not greedily).
   This is what makes it SARSA vs Q-learning.
