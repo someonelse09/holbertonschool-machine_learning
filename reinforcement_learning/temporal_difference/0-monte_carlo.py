@@ -41,7 +41,7 @@ def monte_carlo(env, V, policy, episodes=5000,
             state_t, reward_t = episode[t]
             G = gamma * G + reward_t
             if state_t not in visited:
-                visited.add(episode[t])
+                visited.add(state_t)
                 V[state_t] = V[state_t] + alpha * (G - V[state_t])
 
     return V
