@@ -23,12 +23,13 @@ def monte_carlo(env, V, policy, episodes=5000,
     #  For each episode, the environment is reset and
     #  the policy is followed step-by-step, collecting
     #  (state, reward) tuples until the episode ends
-    for _ in range(episodes):
+    for e in range(episodes):
         state, _ = env.reset()
         episode = []
         for _ in range(max_steps):
             action = policy(state)
-            new_state, reward, terminated, truncated, _ = env.step(action)
+            new_state, reward, terminated, truncated, _ = \
+                env.step(action)
             episode.append((state, reward))
             state = new_state
             if terminated or truncated:
@@ -36,12 +37,12 @@ def monte_carlo(env, V, policy, episodes=5000,
         # After an episode, we traverse it in reverse,
         # accumulating the discounted return G = γ·G + r at each step.
         G = 0
-        visited = set()
+        episode = np.array(episode, dtype=int)
+
         for t in range(len(episode) - 1, -1, -1):
             state_t, reward_t = episode[t]
             G = gamma * G + reward_t
-            if state_t not in visited:
-                visited.add(state_t)
+            if state_t not in episode[:e, 0]:
                 V[state_t] = V[state_t] + alpha * (G - V[state_t])
 
     return V

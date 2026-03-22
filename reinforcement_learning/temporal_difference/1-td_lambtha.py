@@ -29,7 +29,7 @@ def td_lambtha(env, V, policy, lambtha, episodes=5000,
             action = policy(state)
             new_state, reward, terminated, truncated, _ = env.step(action)
 
-            delta = reward + gamma * V[new_state] * (not terminated) - V[state]
+            delta = reward + gamma * V[new_state] - V[state]
 
             E[state] += 1
             V += alpha * delta * E
