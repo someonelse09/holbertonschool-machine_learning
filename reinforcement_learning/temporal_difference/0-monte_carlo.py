@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """This module includes the function
 that performs the Monte Carlo algorithm"""
+import numpy as np
 
 
 def monte_carlo(env, V, policy, episodes=5000,
