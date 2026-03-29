@@ -26,9 +26,8 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
 
     for episode in range(nb_episodes):
         state, _ = env.reset()
-        episode_states = []
-        episode_actions = []
         episode_rewards = []
+        episode_grads = []
         done = False
 
         while not done:
@@ -39,9 +38,8 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
             next_state, reward, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
 
-            episode_states.append(state)
-            episode_actions.append(action)
             episode_rewards.append(reward)
+            episode_grads.append(grad)
 
             state = next_state
 
@@ -53,8 +51,7 @@ def train(env, nb_episodes, alpha=0.000045, gamma=0.98, show_result=False):
                 gamma ** (k - t) * episode_rewards[k]
                 for k in range(t, len(episode_rewards))
             )
-            _, grad = policy_gradient(episode_states[t], weight)
-            weight += alpha * G * grad
+            weight += alpha * G * episode_grads[t]
 
         print("Episode: {} Score: {}".format(episode, score))
 
