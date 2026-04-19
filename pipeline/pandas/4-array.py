@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """This module includes the function that
 takes a pd.DataFrame as input and performs the following"""
-import pandas as pd
 
 
 def array(df):
